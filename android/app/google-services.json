@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "339410179455",
+    "firebase_url": "https://friendly-gaming.firebaseio.com",
+    "project_id": "friendly-gaming",
+    "storage_bucket": "friendly-gaming.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339410179455:android:e463db23a0ac673d7a364a",
+        "android_client_info": {
+          "package_name": "com.zubisofts.friendly_gaming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "339410179455-8fq148mmau9aedfkua0r25tef7fo59t4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByu42BV4nMbdaIEVp17ID8PIXs6-esvyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "339410179455-8fq148mmau9aedfkua0r25tef7fo59t4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
