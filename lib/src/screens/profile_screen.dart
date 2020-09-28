@@ -1,5 +1,7 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
+import 'package:friendly_gaming/src/screens/statistics_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -30,23 +32,38 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: ClipOval(
-                  child: Image.asset(
-                'assets/images/img6.png',
-                width: 150,
-                height: 150,
-                fit: BoxFit.cover,
-              )),
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  var photo = '';
+                  if (state is AuthStateChangedState) {
+                    photo = state.user?.photo;
+                  }
+                  return ClipOval(
+                      child: Image.network(
+                    '$photo',
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ));
+                },
+              ),
             ),
             SizedBox(
               height: 20,
             ),
-            Text(
-              'Anyanwu Nzubechi',
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthStateChangedState) {
+                  return Text(
+                    '${state.user?.name}',
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  );
+                }
+                return Text('');
+              },
             ),
             SizedBox(
               height: 20,
@@ -99,7 +116,8 @@ class ProfileScreen extends StatelessWidget {
                   Icons.keyboard_arrow_right,
                   color: Colors.blue,
                 ),
-                onTap: () {},
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => StatisticsScreen())),
               ),
             ),
             SizedBox(
@@ -180,9 +198,8 @@ class ProfileScreen extends StatelessWidget {
                   Icons.keyboard_arrow_right,
                   color: Colors.blue,
                 ),
-                onTap: () {},
+                onTap: () =>context.bloc<AuthBloc>().add(LogoutEvent())),
               ),
-            )
           ],
         ),
       ),

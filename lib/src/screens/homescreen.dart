@@ -1,5 +1,7 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
@@ -19,6 +21,29 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey fabKey = GlobalKey();
   GlobalKey navKey = GlobalKey();
   bool isSelected;
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Confirm?'),
+        content: new Text('Do you want to logout of this App?'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('No'),
+          ),
+          FlatButton(
+            onPressed: () {
+              context.bloc<AuthBloc>().add(LogoutEvent());
+              Navigator.of(context).pop(true);
+              },
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
+    )) ?? false;
+  }
 
   @override
   void initState() {
@@ -80,28 +105,38 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          IconButton(
-              icon: Icon(
-                Icons.search,
-                color: Colors.black,
-                size: 24,
-              ),
-              onPressed: () {})
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              return IconButton(
+                  icon: Icon(
+                    Icons.exit_to_app,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    context.bloc<AuthBloc>().add(LogoutEvent());
+                    Navigator.pop(context);
+                  });
+            },
+          ),
         ],
       ),
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        children: pages,
-        controller: pageController,
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: PageView(
+          physics: NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          children: pages,
+          controller: pageController,
+        ),
       ),
       floatingActionButton: activePage == 0
           ? FloatingActionButton(
               key: fabKey,
               tooltip: 'Add Post',
               child: Icon(Icons.add),
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => AddPostScreen())))
+              onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AddPostScreen())))
           : SizedBox.shrink(),
       bottomNavigationBar: ConvexAppBar(
         key: navKey,

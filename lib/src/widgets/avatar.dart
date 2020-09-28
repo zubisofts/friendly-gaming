@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
-  double size;
-  String image;
-  String name;
+  final double size;
+  final String image;
+  final String name;
   Avatar({this.size, this.image, this.name});
 
   @override
@@ -30,7 +30,7 @@ class Avatar extends StatelessWidget {
           ),
           child: ClipOval(
               child: Image.asset(
-            'assets/images/${image}',
+            'assets/images/$image',
             width: size,
             height: size,
             fit: BoxFit.cover,

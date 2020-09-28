@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:friendly_gaming/src/datasource/timeline_data_provider.dart';
 import 'package:friendly_gaming/src/model/timeline_data.dart';
 import 'package:friendly_gaming/src/widgets/timeline_card.dart';
 

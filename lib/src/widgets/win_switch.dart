@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class WinSwitch extends StatefulWidget {
-  int firstPlayerScore;
-  int secondPlayerScore;
+  final int firstPlayerScore;
+  final int secondPlayerScore;
 
   WinSwitch({this.firstPlayerScore, this.secondPlayerScore});
 

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_gaming/src/model/chat.dart';
 
 class ChatListRow extends StatelessWidget {
+  final Chat chat;
+
+  ChatListRow({this.chat});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +22,7 @@ class ChatListRow extends StatelessWidget {
             decoration: BoxDecoration(shape: BoxShape.circle),
             child: ClipOval(
                 child: Image.asset(
-              'assets/images/img6.png',
+              'assets/images/${chat.image}',
               width: 50,
               height: 50,
               fit: BoxFit.cover,
@@ -32,17 +37,20 @@ class ChatListRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Andy Jorden',
+                  '${chat.name}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 12.0,
                 ),
                 Text(
-                  'Here is a message from Andy, please reply if seen',
+                  '${chat.lastMessage}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -60,7 +68,7 @@ class ChatListRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              '10:55 PM',
+              '${chat.date}',
               textAlign: TextAlign.end,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
