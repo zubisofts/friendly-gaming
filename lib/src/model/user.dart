@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// {@endtemplate}
 class User extends Equatable {
   /// {@macro user}
-  const User({
+   User({
     @required this.email,
     @required this.id,
     @required this.name,
@@ -26,10 +26,10 @@ class User extends Equatable {
   final String name;
 
   /// Url for the current user's photo.
-  final String photo;
+  String photo;
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = User(email: '', id: '', name: null, photo: null);
+  static var empty = User(email: '', id: '', name: null, photo: null);
 
   User.fromJson(Map<String, dynamic> json)
       : name = json['name'],

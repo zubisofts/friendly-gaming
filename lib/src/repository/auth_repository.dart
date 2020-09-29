@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:friendly_gaming/src/model/user.dart' as UserModel;
+import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +18,7 @@ class SignUpFailure implements Exception {
   SignUpFailure({this.message});
 }
 
-/// Thrown during the login process if a failure occurs.
+///ng the login process if a failure occurs.
 class LogInWithEmailAndPasswordFailure implements Exception {
   String message;
 
@@ -30,7 +31,8 @@ class LogInWithGoogleFailure implements Exception {
 
   LogInWithGoogleFailure({this.message});
 
-}class LogInWithFacebookFailure implements Exception {
+}
+class LogInWithFacebookFailure implements Exception {
   String message;
 
   LogInWithFacebookFailure({this.message});
@@ -89,9 +91,21 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
-      await saveImageToStorage({id:userCredential.user.uid,photo:photo});
-      var user = await addUserToB(userCredential.user.toUser);
-      return user;
+      var user = userCredential.user.toUser;
+      String url='';
+      Map<String, dynamic> userData=user.toJson();
+      userData['name']=name;
+      if(photo != null){
+        var exists = await photo.exists();
+        if(exists){
+          url=await saveImageToStorage(user.id, photo);
+          userData['photo']=url;
+          return await addUserToB(userData);
+        }
+      }else {
+        return await addUserToB(userData);
+      }
+
     } on FirebaseException catch (e) {
       throw SignUpFailure(message: e.message);
     }
@@ -159,7 +173,7 @@ class AuthenticationRepository {
         );
         var userCredential =
             await _firebaseAuth.signInWithCredential(credential);
-        return addUserToB(userCredential.user.toUser);
+        return addUserToB(userCredential.user.toUser.toJson());
       } else {
         await _googleSignIn.signOut();
         throw SignUpFailure(message: "Sorry user already exists.");
@@ -167,21 +181,6 @@ class AuthenticationRepository {
     } on FirebaseException catch (e) {
       print('ex:${e.message}');
       throw SignUpFailure(message: e.message);
-    }
-  }
-
-  /// Signs out the current user which will emit
-  /// [User.empty] from the [user] Stream.
-  ///
-  /// Throws a [LogOutFailure] if an exception occurs.
-  Future<void> logOut() async {
-    try {
-      await Future.wait([
-        _firebaseAuth?.signOut(),
-        _googleSignIn?.signOut(),
-      ]);
-    } on Exception {
-      throw LogOutFailure();
     }
   }
 
@@ -204,11 +203,11 @@ class AuthenticationRepository {
             throw LogInWithFacebookFailure(message: "User with this account already exist.");
           }else{
             var userCredential = await _firebaseAuth.signInWithCredential(credential);
-            await addUserToB(userCredential.user.toUser);
+            await addUserToB(userCredential.user.toUser.toJson());
           }
           break;
         case FacebookLoginStatus.cancelledByUser:
-          print('Error:Facebook Canceled');
+          throw LogInWithFacebookFailure(message: result.errorMessage);
 //        _showCancelledMessage();
           break;
         case FacebookLoginStatus.error:
@@ -262,21 +261,41 @@ class AuthenticationRepository {
     }
   }
 
-  Future<UserModel.User> addUserToB(UserModel.User user) async {
+  Future<UserModel.User> addUserToB(Map<String, dynamic> userData) async {
     try {
       await _firebaseFirestore
           .collection('users')
-          .doc(user.id)
-          .set(user.toJson());
-      print(user.toJson());
-      return user;
+          .doc(userData['id'])
+          .set(userData);
+
+      return UserModel.User.fromJson(userData);
     } on FirebaseAuthException catch (e) {
       throw SignUpFailure(message: e.message);
     }
   }
 
-  Future<UserModel.User>saveImageToStorage(String id, File photo) async{
+  Future<String>saveImageToStorage(String id, File photo) async{
+    try {
+      return await new DataRepository().saveProfileImage(uid: id, photo: photo);
+    }on StorageException catch(e){
+      print('Storage error:${e.message}');
+    }
+  }
 
+  /// Signs out the current user which will emit
+  /// [User.empty] from the [user] Stream.
+  ///
+  /// Throws a [LogOutFailure] if an exception occurs.
+  Future<void> logOut() async {
+    try {
+      await Future.wait([
+        _firebaseAuth?.signOut(),
+        _googleSignIn?.signOut(),
+        _facebookLogin.logOut()
+      ]);
+    } on Exception {
+      throw LogOutFailure();
+    }
   }
 
 }

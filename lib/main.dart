@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +12,9 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   EquatableConfig.stringify = kDebugMode;
   // Bloc.observer = SimpleBlocObserver();
-  await Firebase.initializeApp();
+  var app = await Firebase.initializeApp();
+  // final FirebaseStorage storage = FirebaseStorage(
+  //     app: app, storageBucket: 'gs://flutter-firebase-plugins.appspot.com');
   runApp(MyApp());
 }
 

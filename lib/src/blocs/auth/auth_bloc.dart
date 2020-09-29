@@ -172,7 +172,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> _mapSignupWithEmailAndPasswordEventToState() async*{
     try{
       yield AuthLoadingState();
-      var user = await authenticationRepository.signUp(name: name, email: email, password: password);
+      var user = await authenticationRepository.signUp(name: name, email: email, password: password,photo: photo);
       // print('Signedup User email:${user?.email}');
       // await authenticationRepository.logInWithEmailAndPassword(email: user?.email, password: password);
       yield AuthStateChangedState(user: user);

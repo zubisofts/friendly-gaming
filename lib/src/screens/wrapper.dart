@@ -12,10 +12,10 @@ class Wrapper extends StatelessWidget {
       if (state is AuthStateChangedState) {
         print('Email:${state.user}');
         if(state.user !=null) {
-          Navigator.of(context).push(
+          Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => HomeScreen()));
         }
-        // return state.user != null ? HomeScreen() : LoginScreen();
+        return state.user != null ? HomeScreen() : LoginScreen();
       }
       // return LoginScreen();
     },child: LoginScreen(),);
