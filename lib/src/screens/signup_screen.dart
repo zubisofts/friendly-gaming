@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
-import 'package:friendly_gaming/src/screens/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SignupScreen extends StatelessWidget {
+  SignupScreen(this.onPageChanged);
+
+  Function onPageChanged;
+
   Future<File> getImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -20,209 +23,171 @@ class SignupScreen extends StatelessWidget {
     }
   }
 
-  Future<bool> _onWillPop(BuildContext context) async {
-    return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Confirm?'),
-        content: new Text('Do you want to logout of this App?'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
-          ),
-          FlatButton(
-            onPressed: () {
-              context.bloc<AuthBloc>().add(LogoutEvent());
-              Navigator.of(context).pop(true);
-            },
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ?? false;
-  }
-
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text('Sign Up', style: TextStyle(color: Colors.black)),
-        leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.blue,
-            ),
-            onPressed: () {}),
-      ),
-      body: Stack(children: [
-        SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 16.0),
-                      padding: EdgeInsets.all(1),
-                      // width: 100,
-                      // height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 2,
-                            blurRadius: 2,
-                            offset: Offset(0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          if (state is OnSignupFormSubmittedState) {
-                            if (state.photo != null)
-                              return ClipOval(
-                                  child: Image.file(
-                                state.photo,
+    return Stack(children: [
+      SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 16.0),
+                    padding: EdgeInsets.all(1),
+                    // width: 100,
+                    // height: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 2,
+                          offset: Offset(0, 2), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        File photo;
+                        if (state is OnSignupFormSubmittedState) {
+                          photo = state.photo;
+                        }
+                        return photo != null
+                            ? ClipOval(
+                                child: Image.file(
+                                photo,
                                 width: 150,
                                 height: 150,
                                 fit: BoxFit.cover,
-                              ));
-                          }
-                          return ClipOval(
-                            child: Image.asset(
-                              'assets/images/profile_icon.png',
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
+                              ))
+                            : ClipOval(
+                                child: Image.asset(
+                                  'assets/images/profile_icon.png',
+                                  width: 150,
+                                  height: 150,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0.0,
+                    right: 0.0,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 2,
+                              blurRadius: 2,
+                              offset:
+                                  Offset(0, 2), // changes position of shadow
                             ),
-                          );
-                        },
-                      ),
+                          ],
+                        ),
+                        child: IconButton(
+                            icon: Icon(
+                              Icons.add_a_photo,
+                              color: Colors.white,
+                            ),
+                            color: Colors.black45,
+                            onPressed: () async {
+                              File file = await getImage();
+                              context.bloc<AuthBloc>().add(
+                                  OnSubmitSignupDetailsEvent(
+                                      photo: file, which: 0));
+                            })),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              SignupForm(),
+              SizedBox(
+                height: 8,
+              ),
+              Text(
+                'OR',
+                style: TextStyle(color: Colors.blueGrey, fontSize: 18),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              SocialSignupForm(),
+              SizedBox(
+                height: 16,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Already have an account?"),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  InkWell(
+                    onTap: onPageChanged,
+                    child: Text(
+                      "Login Now",
+                      style: TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
                     ),
-                    Positioned(
-                      bottom: 0.0,
-                      right: 0.0,
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 2,
-                                blurRadius: 2,
-                                offset:
-                                    Offset(0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: IconButton(
-                              icon: Icon(
-                                Icons.add_a_photo,
-                                color: Colors.white,
-                              ),
-                              color: Colors.black45,
-                              onPressed: () async {
-                                File file = await getImage();
-                                context.bloc<AuthBloc>().add(
-                                    OnSubmitSignupDetailsEvent(
-                                        photo: file, which: 0));
-                              })),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                SignupForm(),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'OR',
-                  style: TextStyle(color: Colors.blueGrey, fontSize: 18),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                SocialSignupForm(),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Already have an account?"),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => LoginScreen())),
-                      child: Text(
-                        "Login Now",
-                        style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
-        BlocConsumer<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state is AuthLoadingState) {
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.white70,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SpinKitWanderingCubes(
-                      color: Colors.blue,
-                      size: 70.0,
-                    ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    Text(
-                      'Loading',
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              );
-            }
-            if (state is AuthErrorState) {
-              return SizedBox.shrink();
-            }
+      ),
+      BlocConsumer<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthLoadingState) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.white70,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitWanderingCubes(
+                    color: Colors.blue,
+                    size: 70.0,
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Text(
+                    'Loading',
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+            );
+          }
+          if (state is AuthErrorState) {
             return SizedBox.shrink();
-          },
-          listener: (context, state) {
-            if (state is AuthErrorState) {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text('Error:${state.errorMessage}'),
-              ));
-            }
-          },
-        )
-      ]),
-    );
+          }
+          return SizedBox.shrink();
+        },
+        listener: (context, state) {
+          if (state is AuthErrorState) {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('Error:${state.errorMessage}'),
+            ));
+          }
+        },
+      )
+    ]);
   }
 }
 
@@ -238,7 +203,7 @@ class SocialSignupForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         InkWell(
-          onTap: ()=>context.bloc<AuthBloc>().add(SignupWithFacebokEvent()),
+          onTap: () => context.bloc<AuthBloc>().add(SignupWithFacebokEvent()),
           child: CircleAvatar(
             radius: 24,
             backgroundColor: Colors.white,
@@ -362,6 +327,7 @@ class SignupForm extends StatelessWidget {
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthStateChangedState) {
+                // if (state.user != null) Navigator.of(context).pop();
                 // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
               }
             },

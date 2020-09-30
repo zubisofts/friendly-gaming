@@ -6,145 +6,145 @@ import 'package:friendly_gaming/src/screens/reset_password_screen.dart';
 import 'package:friendly_gaming/src/screens/signup_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  Function onPageChanged;
+
+  LoginScreen(this.onPageChanged);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SingleChildScrollView(
+    return SingleChildScrollView(
       child: Stack(
         children: [
-        Column(
-          children: [
-            Container(
-                width: MediaQuery.of(context).size.width,
-                child: Image.asset('assets/images/gaming_img3.jpg',
-                    fit: BoxFit.cover)),
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Form(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Email',
-                        style:
-                            TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      EmailInput(
-                        controller: emailController,
-                      ),
-                      SizedBox(
-                        height: 8.0,
-                      ),
-                      Text(
-                        'Password',
-                        style:
-                            TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      PasswordInput(
-                        controller: passwordController,
-                      ),
-                      SizedBox(
-                        height: 12.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox.shrink(),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ResetPasswordScreen()));
-                            },
-                            child: Text('Forgot Password?',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold)),
+          Column(
+            children: [
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Image.asset('assets/images/gaming_img3.jpg',
+                      fit: BoxFit.cover)),
+              Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Form(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Email',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        EmailInput(),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          'Password',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        PasswordInput(),
+                        SizedBox(
+                          height: 12.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox.shrink(),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        ResetPasswordScreen()));
+                              },
+                              child: Text('Forgot Password?',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        LoginButton()
+                      ],
+                    )),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      'OR',
+                      style: TextStyle(color: Colors.blueGrey, fontSize: 18),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () => context
+                              .bloc<AuthBloc>()
+                              .add(LoginWithFacebokEvent()),
+                          child: CircleAvatar(
+                            radius: 24,
+                            backgroundColor: Colors.white,
+                            child: Image.asset('assets/icons/fb.png'),
                           ),
-                        ],
-                      ),
-                      LoginButton()
-                    ],
-                  )),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    'OR',
-                    style: TextStyle(color: Colors.blueGrey, fontSize: 18),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: ()=>context.bloc<AuthBloc>().add(LoginWithFacebokEvent()),
-                        child: CircleAvatar(
+                        ),
+                        CircleAvatar(
                           radius: 24,
                           backgroundColor: Colors.white,
-                          child: Image.asset('assets/icons/fb.png'),
+                          child: Image.asset('assets/icons/twitter1.png'),
                         ),
-                      ),
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Colors.white,
-                        child: Image.asset('assets/icons/twitter1.png'),
-                      ),
-                      InkWell(
-                        onTap: ()=>context.bloc<AuthBloc>().add(LoginWithGoogleEvent()),
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.white,
-                          child: Image.asset('assets/icons/google.png'),
+                        InkWell(
+                          onTap: () => context
+                              .bloc<AuthBloc>()
+                              .add(LoginWithGoogleEvent()),
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.white,
+                            child: Image.asset('assets/icons/google.png'),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?"),
+                        SizedBox(
+                          width: 16,
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account?"),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      InkWell(
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => SignupScreen())),
-                        child: Text(
-                          "Signup Now",
-                          style: TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        InkWell(
+                          onTap: onPageChanged,
+                          child: Text(
+                            "Signup Now",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-          BlocBuilder<AuthBloc,AuthState>(
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
-              if(state is AuthLoadingState){
+              if (state is AuthLoadingState) {
                 return Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -157,8 +157,14 @@ class LoginScreen extends StatelessWidget {
                         color: Colors.blue,
                         size: 70.0,
                       ),
-                      SizedBox(height: 16.0,),
-                      Text('Loading',style: TextStyle(fontSize:18.0,fontWeight: FontWeight.bold),)
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                      Text(
+                        'Loading',
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
                 );
@@ -168,7 +174,7 @@ class LoginScreen extends StatelessWidget {
           )
         ],
       ),
-    ));
+    );
   }
 }
 
@@ -190,7 +196,8 @@ class PasswordInput extends StatelessWidget {
         return TextFormField(
           key: const Key('password_input'),
           onChanged: (password) => context.bloc<AuthBloc>().add(
-              OnSubmitLoginFormDetailsEvent(password: password, isEmail: false)),
+              OnSubmitLoginFormDetailsEvent(
+                  password: password, isEmail: false)),
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
           decoration: InputDecoration(
@@ -214,7 +221,7 @@ class EmailInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        bool isEmailValid=true;
+        bool isEmailValid = true;
 
         if (state is OnLoginFormSubmittedState) {
           isEmailValid = state.emailRes;

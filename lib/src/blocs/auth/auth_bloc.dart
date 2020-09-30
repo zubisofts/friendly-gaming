@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/auth_repository.dart';
+import 'package:friendly_gaming/src/repository/data_repository.dart';
 
 part 'auth_event.dart';
 
@@ -93,7 +94,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (event is AuthStateChangedEvent) {
-      yield AuthStateChangedState(user: event.user);
+        // var user =event.user?.id !=null ? await new DataRepository().user(event.user.id):null;
+        yield AuthStateChangedState(user: event.user);
+
     }
   }
 

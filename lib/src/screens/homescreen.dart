@@ -2,19 +2,24 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
+import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
 import 'package:friendly_gaming/src/screens/timeline_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  final User user;
+
+  HomeScreen({this.user});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Widget> pages = [TimelineScreen(), ChatScreen(), ProfileScreen()];
-  List<String> pageTitles = ['Timeline', 'Chats', 'Profile'];
+  List<Widget> pages;
+  List<String> pageTitles;
   int activePage;
   String title;
   PageController pageController;
@@ -22,31 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey navKey = GlobalKey();
   bool isSelected;
 
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Confirm?'),
-        content: new Text('Do you want to logout of this App?'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
-          ),
-          FlatButton(
-            onPressed: () {
-              context.bloc<AuthBloc>().add(LogoutEvent());
-              Navigator.of(context).pop(true);
-              },
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ?? false;
-  }
-
   @override
   void initState() {
+    pages = [TimelineScreen(), ChatScreen(), ProfileScreen(user: widget.user)];
+    pageTitles = ['Timeline', 'Chats', 'Profile'];
     activePage = 0;
     title = pageTitles[0];
     isSelected = false;
@@ -115,20 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   onPressed: () {
                     context.bloc<AuthBloc>().add(LogoutEvent());
-                    Navigator.pop(context);
+                    // Navigator.pop(context, ModalRoute.withName('/login'));
                   });
             },
           ),
         ],
       ),
-      body: WillPopScope(
-        onWillPop: _onWillPop,
-        child: PageView(
-          physics: NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          children: pages,
-          controller: pageController,
-        ),
+      body: PageView(
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        children: pages,
+        controller: pageController,
       ),
       floatingActionButton: activePage == 0
           ? FloatingActionButton(
