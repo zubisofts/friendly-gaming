@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/repository/auth_repository.dart';
+import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'package:friendly_gaming/src/screens/homescreen.dart';
 import 'package:friendly_gaming/src/screens/auth_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
@@ -18,6 +19,7 @@ void main() async{
   EquatableConfig.stringify = kDebugMode;
   // Bloc.observer = SimpleBlocObserver();
   await Firebase.initializeApp();
+
   // final FirebaseStorage storage = FirebaseStorage(
   //     app: app, storageBucket: 'gs://flutter-firebase-plugins.appspot.com');
   runApp(MyApp());
@@ -26,6 +28,7 @@ void main() async{
 class MyApp extends StatelessWidget {
   final AuthenticationRepository authenticationRepository =
       AuthenticationRepository();
+  final DataRepository dataRepository=DataRepository();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -35,7 +38,7 @@ class MyApp extends StatelessWidget {
                   authenticationRepository: authenticationRepository,
                 )),
         BlocProvider<DataBloc>(
-            create: (context) => DataBloc()),
+            create: (context) => DataBloc(dataRepository: dataRepository)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

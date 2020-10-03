@@ -103,6 +103,7 @@ class AuthenticationRepository {
           return await addUserToB(userData);
         }
       }else {
+        userData['photo']='https://www.iconfinder.com/data/icons/avatars-circle-2/72/146-512.png';
         return await addUserToB(userData);
       }
 

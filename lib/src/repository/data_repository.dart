@@ -49,4 +49,14 @@ class DataRepository {
       return null;
     }
   }
+
+  Future<List<User>> get users async{
+    try {
+      var querySnapshot = await FirebaseFirestore.instance.collection(
+          "users").get();
+      return querySnapshot.docs.map((e) => User.fromJson(e.data())).toList();
+    }catch(e){
+      print(e);
+    }
+  }
 }
