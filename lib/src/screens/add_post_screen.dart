@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:friendly_gaming/src/screens/homescreen.dart';
 import 'package:friendly_gaming/src/widgets/avatar.dart';
 import 'package:friendly_gaming/src/widgets/game_selector.dart';
 import 'package:friendly_gaming/src/widgets/score_selector.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -17,15 +20,34 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   User firstPlayer;
   User secondPlayer;
+  Map<String, Widget> games = {
+    "FIFA": FIFAScoreSelector(),
+    "CRICKET": CricketScoreSelector()
+  };
+  String selectedGameKey;
+  List<String> images = [null, null, null];
 
   @override
   void initState() {
+    selectedGameKey = "FIFA";
     User user = User(
         email: '', id: '', photo: 'https://www.valiance.gg/images/089e0ea.png');
     firstPlayer = user;
     secondPlayer = user;
     context.bloc<DataBloc>().add(FetchUsersEvent());
     super.initState();
+  }
+
+  Future<String> getImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      return pickedFile.path;
+    } else {
+      print('No image selected.');
+      return null;
+    }
   }
 
   @override
@@ -52,12 +74,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.all(16.0),
-          padding: EdgeInsets.all(8.0),
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          // margin: EdgeInsets.all(16.0),
+          // padding: EdgeInsets.all(8.0),
+          width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(12.0)),
           child: Column(
@@ -129,142 +148,256 @@ class _AddPostScreenState extends State<AddPostScreen> {
               SizedBox(
                 height: 18.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.0),
-                      width: 130,
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12.0)),
-                      child: ScoreSelector(
-                        onSelect: (int s) {
-                          print(s);
-                        },
-                      )),
-                  SizedBox.shrink(),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.0),
-                      width: 130,
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12.0)),
-                      child: ScoreSelector(
-                        onSelect: (int s) {
-                          print(s);
-                        },
-                      )),
-                ],
-              ),
+              games[selectedGameKey],
               SizedBox(height: 32.0),
-              Row(
-                children: [
-                  Text(
-                    'Select Games',
-                    style:
-                    TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: 16.0,
-                  ),
-                  Expanded(
-                    child: Form(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24.0),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24.0),
-                          child: TextField(
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  hintText: 'Search Game',
-                                  border: InputBorder.none,
-                                  // focusedBorder: InputBorder.none,
-                                  prefixIcon: Icon(Icons.search),
-                                  fillColor: Colors.grey[100])),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Text(
+                      'Select Games',
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: 16.0,
+                    ),
+                    Expanded(
+                      child: Form(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(24.0),
+                            child: TextField(
+                                decoration: InputDecoration(
+                                    filled: true,
+                                    hintText: 'Search Game',
+                                    border: InputBorder.none,
+                                    // focusedBorder: InputBorder.none,
+                                    prefixIcon: Icon(Icons.search),
+                                    fillColor: Colors.grey[100])),
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
               Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
+                  margin: EdgeInsets.symmetric(horizontal: 8.0),
+                  width: MediaQuery.of(context).size.width,
                   child: GameSelector(
                     onGameSelected: (game) {
-                      print(game);
+                      setState(() {
+                        selectedGameKey = game;
+                      });
                     },
                   )),
               SizedBox(
                 height: 16.0,
               ),
-              Align(
-                  alignment: Alignment.topLeft,
-                  child: Text('Add Images',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text('Add Images',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18))),
+              ),
               SizedBox(
                 height: 10.0,
               ),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: DottedBorder(
-                        padding: EdgeInsets.all(16.0),
-                        color: Colors.grey,
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.grey,
-                        ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        images[0] = await getImage();
+                        setState(() {});
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            padding: EdgeInsets.all(8.0),
+                            child: DottedBorder(
+                              // padding: EdgeInsets.all(16.0),
+                              color: Colors.grey,
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: images[0] != null
+                                        ? Image.file(
+                                            File(images[0]),
+                                            width: 40,
+                                            height: 40,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : SizedBox.shrink(),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          images[0] != null
+                              ? Positioned(
+                                  right: 0,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        images[0] = null;
+                                      });
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red,
+                                        ),
+                                        child: Icon(Icons.close,
+                                            color: Colors.white)),
+                                  ))
+                              : SizedBox.shrink()
+                        ],
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: DottedBorder(
-                        padding: EdgeInsets.all(16.0),
-                        color: Colors.grey,
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.grey,
-                        ),
+                    InkWell(
+                      onTap: () async {
+                        images[1] = await getImage();
+                        setState(() {});
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            padding: EdgeInsets.all(8.0),
+                            child: DottedBorder(
+                              // padding: EdgeInsets.all(16.0),
+                              color: Colors.grey,
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: images[1] != null
+                                        ? Image.file(
+                                            File(images[1]),
+                                            width: 40,
+                                            height: 40,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : SizedBox.shrink(),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          images[1] != null
+                              ? Positioned(
+                                  right: 0,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        images[1] = null;
+                                      });
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red,
+                                        ),
+                                        child: Icon(Icons.close,
+                                            color: Colors.white)),
+                                  ))
+                              : SizedBox.shrink()
+                        ],
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: DottedBorder(
-                        padding: EdgeInsets.all(16.0),
-                        color: Colors.grey,
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.grey,
-                        ),
+                    InkWell(
+                      onTap: () async {
+                        images[2] = await getImage();
+                        setState(() {});
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            padding: EdgeInsets.all(8.0),
+                            child: DottedBorder(
+                              // padding: EdgeInsets.all(16.0),
+                              color: Colors.grey,
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: images[2] != null
+                                        ? Image.file(
+                                            File(images[2]),
+                                            width: 40,
+                                            height: 40,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : SizedBox.shrink(),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          images[2] != null
+                              ? Positioned(
+                                  right: 0,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        images[2] = null;
+                                      });
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red,
+                                        ),
+                                        child: Icon(Icons.close,
+                                            color: Colors.white)),
+                                  ))
+                              : SizedBox.shrink()
+                        ],
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 32),
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
+                margin: EdgeInsets.symmetric(vertical: 32, horizontal: 16.0),
+                width: MediaQuery.of(context).size.width,
                 child: FlatButton(
                   padding: EdgeInsets.symmetric(vertical: 18),
                   onPressed: () {
@@ -285,6 +418,114 @@ class _AddPostScreenState extends State<AddPostScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class FIFAScoreSelector extends StatelessWidget {
+  const FIFAScoreSelector({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            width: 130,
+            decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12.0)),
+            child: ScoreSelector(
+              onSelect: (int s) {
+                print(s);
+              },
+            )),
+        SizedBox.shrink(),
+        Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            width: 130,
+            decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12.0)),
+            child: ScoreSelector(
+              onSelect: (int s) {
+                print(s);
+              },
+            )),
+      ],
+    );
+  }
+}
+
+class CricketScoreSelector extends StatelessWidget {
+  const CricketScoreSelector({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              width: 130,
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Column(
+                children: [
+                  ScoreSelector(
+                    onSelect: (int s) {
+                      print(s);
+                    },
+                  ),
+                  SizedBox(height: 8.0),
+                  ScoreSelector(
+                    onSelect: (int s) {
+                      print(s);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Text('Run/Out')
+          ],
+        ),
+        SizedBox.shrink(),
+        Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              width: 130,
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Column(
+                children: [
+                  ScoreSelector(
+                    onSelect: (int s) {
+                      print(s);
+                    },
+                  ),
+                  SizedBox(height: 8.0),
+                  ScoreSelector(
+                    onSelect: (int s) {
+                      print(s);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Text('Run/Out')
+          ],
+        ),
+      ],
     );
   }
 }
@@ -311,36 +552,42 @@ class _PlayerSelectionWidgetState extends State<PlayerSelectionWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Text(
-              'Select Persons',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              width: 16.0,
-            ),
-            Expanded(
-              child: Form(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.0),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24.0),
-                    child: TextField(
-                        decoration: InputDecoration(
-                            filled: true,
-                            hintText: 'Search Persons',
-                            border: InputBorder.none,
-                            // focusedBorder: InputBorder.none,
-                            prefixIcon: Icon(Icons.search),
-                            fillColor: Colors.grey[100])),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              Text(
+                'Select Persons',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                width: 16.0,
+              ),
+              Expanded(
+                child: Form(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24.0),
+                      child: TextField(
+                          onChanged: (value) => context
+                              .bloc<DataBloc>()
+                              .add(SearchUserEvent(query: value)),
+                          decoration: InputDecoration(
+                              filled: true,
+                              hintText: 'Search Persons',
+                              border: InputBorder.none,
+                              // focusedBorder: InputBorder.none,
+                              prefixIcon: Icon(Icons.search),
+                              fillColor: Colors.grey[100])),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
         SizedBox(height: 24.0),
         BlocBuilder<DataBloc, DataState>(builder: (context, state) {
@@ -352,57 +599,53 @@ class _PlayerSelectionWidgetState extends State<PlayerSelectionWidget> {
             List<User> users = state.users;
             return users != null
                 ? Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              height: 100,
-              child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
-                    return PopupMenuButton(
-                      initialValue: selectedIndex,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                          widget.onSelectPlayer(
-                              users[index], selectedIndex == 1);
-                        });
-                      },
-                      itemBuilder: (BuildContext context) =>
-                      [
-                        PopupMenuItem(
-                          value: 1,
-                          child: Text(
-                            'Player 1',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 2,
-                          child: Text(
-                            'Player 2',
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      ],
-                      child: Avatar(
-                          size: 50,
-                          image: users[index].photo,
-                          name: users[index].name),
-                    );
-                  }),
-            )
+                    width: MediaQuery.of(context).size.width,
+                    height: 100,
+                    child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: users.length,
+                        itemBuilder: (context, index) {
+                          return PopupMenuButton(
+                            initialValue: selectedIndex,
+                            onSelected: (value) {
+                              setState(() {
+                                selectedIndex = value;
+                                widget.onSelectPlayer(
+                                    users[index], selectedIndex == 1);
+                              });
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              PopupMenuItem(
+                                value: 1,
+                                child: Text(
+                                  'Player 1',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 2,
+                                child: Text(
+                                  'Player 2',
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                            child: Avatar(
+                                size: 50,
+                                image: users[index].photo,
+                                name: users[index].name),
+                          );
+                        }),
+                  )
                 : Container(
-              child: Text('Nothing found'),
-            );
+                    child: Text('Nothing found'),
+                  );
           }
           return SizedBox.shrink();
         })
@@ -412,27 +655,23 @@ class _PlayerSelectionWidgetState extends State<PlayerSelectionWidget> {
 
   Widget buildListViewPlaceHolder(BuildContext context) {
     return Container(
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: MediaQuery.of(context).size.width,
       height: 100,
       child: ListView.builder(
         physics: BouncingScrollPhysics(),
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemCount: 8,
-        itemBuilder: (context, index) =>
-            ClipOval(
-              child: Shimmer.fromColors(
-                baseColor: Colors.grey[300],
-                highlightColor: Colors.grey[100],
-                child: Container(
-                  width: 50,
-                  height: 50,
-                ),
-              ),
+        itemBuilder: (context, index) => ClipOval(
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300],
+            highlightColor: Colors.grey[100],
+            child: Container(
+              width: 50,
+              height: 50,
             ),
+          ),
+        ),
       ),
     );
   }
@@ -458,18 +697,25 @@ class LoadingWidget extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 24.0,
-                          backgroundImage: AssetImage('assets/images/profile_icon.png'),),
-                          SizedBox(height: 8.0,),
-                          Container(width: 50,height: 20,color: Colors.grey,)
+                            backgroundImage:
+                                AssetImage('assets/images/profile_icon.png'),
+                          ),
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          Container(
+                            width: 50,
+                            height: 20,
+                            color: Colors.grey,
+                          )
                         ],
                       ),
                     ),
-                  baseColor: Colors.grey[300],
-                  highlightColor: Colors.grey[100]);
+                    baseColor: Colors.grey[300],
+                    highlightColor: Colors.grey[100]);
               }),
         ],
       ),
     );
   }
-
 }

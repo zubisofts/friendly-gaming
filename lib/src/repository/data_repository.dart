@@ -50,13 +50,30 @@ class DataRepository {
     }
   }
 
-  Future<List<User>> get users async{
+  Future<List<User>> get users async {
     try {
-      var querySnapshot = await FirebaseFirestore.instance.collection(
-          "users").get();
+      var querySnapshot =
+          await FirebaseFirestore.instance.collection("users").get();
       return querySnapshot.docs.map((e) => User.fromJson(e.data())).toList();
-    }catch(e){
+    } catch (e) {
       print(e);
+    }
+  }
+
+  Future<List<User>> searchUsers(String query) async {
+    print(query);
+    try {
+      var querySnapshot =
+          await FirebaseFirestore.instance.collection("users").get();
+      print(querySnapshot.docs.length);
+      return querySnapshot.docs
+          .map((e) => User.fromJson(e.data()))
+          .where((element) =>
+              element.name.toLowerCase().startsWith(query.toLowerCase()))
+          .toList();
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 }

@@ -7,7 +7,7 @@ abstract class DataEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class UserDataEvent extends DataEvent{
+class UserDataEvent extends DataEvent {
   final String uid;
   UserDataEvent({this.uid});
 
@@ -15,4 +15,11 @@ class UserDataEvent extends DataEvent{
   List<Object> get props => [uid];
 }
 
-class FetchUsersEvent extends DataEvent{}
+class FetchUsersEvent extends DataEvent {}
+
+class SearchUserEvent extends DataEvent {
+  final String query;
+  SearchUserEvent({this.query});
+  @override
+  List<Object> get props => [query];
+}

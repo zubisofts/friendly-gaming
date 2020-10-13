@@ -7,11 +7,6 @@ import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/repository/auth_repository.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
-import 'package:friendly_gaming/src/screens/homescreen.dart';
-import 'package:friendly_gaming/src/screens/auth_screen.dart';
-import 'package:friendly_gaming/src/screens/profile_screen.dart';
-import 'package:friendly_gaming/src/screens/signup_screen.dart';
-import 'package:friendly_gaming/src/screens/statistics_screen.dart';
 import 'src/screens/splashscreen.dart';
 
 void main() async{

@@ -17,33 +17,41 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   Stream<DataState> mapEventToState(
     DataEvent event,
   ) async* {
-    if(event is UserDataEvent){
+    if (event is UserDataEvent) {
       yield* _mapUserDataEventToState(event.uid);
     }
 
-    if(event is FetchUsersEvent){
+    if (event is FetchUsersEvent) {
       yield* _mapFetchUsersEventToState();
     }
 
-  }
-
-  Stream<DataState> _mapUserDataEventToState(String uid) async*{
-    try{
-      var user = await dataRepository.user(uid);
-      yield UserDataState(user:user);
-    }on FirebaseException catch(e){
-      print('****************************Fetch User Data Error*************************');
+    if (event is SearchUserEvent) {
+      yield* _mapSearchUserEventToState(event.query);
     }
   }
 
- Stream<DataState> _mapFetchUsersEventToState() async*{
-    try{
+  Stream<DataState> _mapUserDataEventToState(String uid) async* {
+    try {
+      var user = await dataRepository.user(uid);
+      yield UserDataState(user: user);
+    } on FirebaseException catch (e) {
+      print(
+          '****************************Fetch User Data Error*************************');
+    }
+  }
+  Stream<DataState> _mapFetchUsersEventToState() async* {
+    try {
       yield UsersLoadingState();
       List<User> users = await dataRepository.users;
       yield UsersFetchedState(users: users);
-    }catch(e){
+    } catch (e) {}
+  }
 
-    }
- }
-
+   Stream<DataState> _mapSearchUserEventToState(String query) async* {
+    try {
+      yield UsersLoadingState();
+      List<User> users = await dataRepository.searchUsers(query);
+      yield UsersFetchedState(users: users);
+    } catch (e) {}
+  }
 }
