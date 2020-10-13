@@ -20,12 +20,10 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   User firstPlayer;
   User secondPlayer;
-  Map<String, Widget> games = {
-    "FIFA": FIFAScoreSelector(),
-    "CRICKET": CricketScoreSelector()
-  };
+  Map<String, Widget> games;
   String selectedGameKey;
   List<String> images = [null, null, null];
+  Map scores = {};
 
   @override
   void initState() {
@@ -35,6 +33,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
     firstPlayer = user;
     secondPlayer = user;
     context.bloc<DataBloc>().add(FetchUsersEvent());
+    games = {
+      "FIFA": FIFAScoreSelector(
+        onSelected: (score) {
+          setState(() {
+            scores = score;
+          });
+        },
+      ),
+      "CRICKET": CricketScoreSelector(
+        onSelected: (score) {
+          setState(() {
+            scores = score;
+          });
+        },
+      )
+    };
     super.initState();
   }
 
@@ -423,9 +437,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
 }
 
 class FIFAScoreSelector extends StatelessWidget {
-  const FIFAScoreSelector({
-    Key key,
-  }) : super(key: key);
+  FIFAScoreSelector({Key key, this.onSelected}) : super(key: key);
+
+  final Function(Map) onSelected;
+
+  final Map<String, int> scores = {};
 
   @override
   Widget build(BuildContext context) {
@@ -440,7 +456,8 @@ class FIFAScoreSelector extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0)),
             child: ScoreSelector(
               onSelect: (int s) {
-                print(s);
+                scores['firstPlayerScore'] = s;
+                onSelected(scores);
               },
             )),
         SizedBox.shrink(),
@@ -452,7 +469,8 @@ class FIFAScoreSelector extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0)),
             child: ScoreSelector(
               onSelect: (int s) {
-                print(s);
+                scores['secondPlayerScore'] = s;
+                onSelected(scores);
               },
             )),
       ],
@@ -461,9 +479,11 @@ class FIFAScoreSelector extends StatelessWidget {
 }
 
 class CricketScoreSelector extends StatelessWidget {
-  const CricketScoreSelector({
-    Key key,
-  }) : super(key: key);
+  final Function(Map) onSelected;
+
+  final Map<String, int> scores = {};
+
+  CricketScoreSelector({Key key, this.onSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -482,13 +502,15 @@ class CricketScoreSelector extends StatelessWidget {
                 children: [
                   ScoreSelector(
                     onSelect: (int s) {
-                      print(s);
+                      scores['run1'] = s;
+                      onSelected(scores);
                     },
                   ),
                   SizedBox(height: 8.0),
                   ScoreSelector(
                     onSelect: (int s) {
-                      print(s);
+                      scores['out1'] = s;
+                      onSelected(scores);
                     },
                   ),
                 ],
@@ -510,13 +532,15 @@ class CricketScoreSelector extends StatelessWidget {
                 children: [
                   ScoreSelector(
                     onSelect: (int s) {
-                      print(s);
+                      scores['run2'] = s;
+                      onSelected(scores);
                     },
                   ),
                   SizedBox(height: 8.0),
                   ScoreSelector(
                     onSelect: (int s) {
-                      print(s);
+                      scores['out2'] = s;
+                      onSelected(scores);
                     },
                   ),
                 ],
