@@ -54,8 +54,8 @@ class _GameSelectorState extends State<GameSelector> {
                           selectedGame = 'COD';
                           widget.onGameSelected(selectedGame);
                         }),
-                    child:
-                        _buildGameWidget(title: 'COD', isSelected: 'COD' == selectedGame)),
+                    child: _buildGameWidget(
+                        title: 'COD', isSelected: 'COD' == selectedGame)),
                 InkWell(
                     onTap: () => setState(() {
                           selectedGame = 'DOTA 2';
@@ -73,19 +73,28 @@ class _GameSelectorState extends State<GameSelector> {
 
   Widget _buildGameWidget({String title, bool isSelected}) {
     return AnimatedContainer(
-      margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.blueAccent : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16.0),
         border: Border.fromBorderSide(BorderSide(
-            width: 1, color: isSelected ? Colors.blue : Colors.grey)),
+            width: isSelected ? 2 : 1,
+            color: isSelected ? Colors.blue : Colors.grey)),
+            boxShadow: isSelected ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 2,
+                          offset: Offset(0, 2), // changes position of shadow
+                        ),
+                      ]:[],
       ),
-      duration: Duration(milliseconds: 500),
+      duration: Duration(milliseconds: 300),
       curve: Curves.easeInOutQuart,
       child: Center(
         child: Text(title,
-            style: TextStyle(color: isSelected ? Colors.white : Colors.grey)),
+            style: TextStyle(color: isSelected ? Colors.blue : Colors.grey)),
       ),
     );
   }

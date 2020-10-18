@@ -15,18 +15,21 @@ class _ScoreSelectorState extends State<ScoreSelector> {
 
   @override
   void initState() {
-    number = 5;
+    number = 0;
     textEditingController = TextEditingController(text: '$number');
+    textEditingController.addListener(() {
+      widget.onSelect(int.parse(textEditingController.text));
+    });
     super.initState();
   }
 
   void increaseNumber() => setState(() {
-        number = number < 10 ? number + 1 : number;
+        number = number + 1;
         textEditingController.text = '$number';
       });
 
   void decreaseNumber() => setState(() {
-        number = number > 0 ? number - 1 : number;
+        number = number != 0 ? number - 1 : 0;
         textEditingController.text = '$number';
       });
 
@@ -41,7 +44,7 @@ class _ScoreSelectorState extends State<ScoreSelector> {
             child: InkWell(
               onTap: decreaseNumber,
               child: Container(
-                  height: 24,
+                  height: 18,
                   decoration: BoxDecoration(
                       color: Colors.grey,
                       borderRadius: BorderRadius.circular(5.0)),
@@ -62,21 +65,14 @@ class _ScoreSelectorState extends State<ScoreSelector> {
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 maxLines: 1,
-                maxLength: 2,
+                maxLength: 3,
                 buildCounter:
                     (context, {currentLength, isFocused, maxLength}) => null,
                 maxLengthEnforced: true,
-                style: TextStyle(fontSize: 40, color: Colors.blue),
+                style: TextStyle(fontSize: 30, color: Colors.blue),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    textEditingController.text=int.parse(value) > 10 ? '10' : value;
-                    // number = int.parse(value);
-                    widget.onSelect(int.parse(value));
-                  });
-                },
               ),
             ),
           ),
@@ -85,7 +81,7 @@ class _ScoreSelectorState extends State<ScoreSelector> {
             child: InkWell(
               onTap: increaseNumber,
               child: Container(
-                  height: 24,
+                  height: 18,
                   decoration: BoxDecoration(
                       color: Colors.grey,
                       borderRadius: BorderRadius.circular(5.0)),

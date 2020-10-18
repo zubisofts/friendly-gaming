@@ -27,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey navKey = GlobalKey();
   bool isSelected;
 
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     pages = [TimelineScreen(), ChatScreen(), ProfileScreen(user: widget.user)];
@@ -43,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -116,16 +119,19 @@ class _HomeScreenState extends State<HomeScreen> {
               key: fabKey,
               tooltip: 'Add Post',
               child: Icon(Icons.add),
-              onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => AddPostScreen())))
+              onPressed: () {
+                // scaffoldKey.currentState
+                // .showSnackBar(SnackBar(content: Text('heloo')));
+                _settingModalBottomSheet(context);
+              })
           : SizedBox.shrink(),
       bottomNavigationBar: ConvexAppBar(
-        key: navKey,
+        // key: navKey,
         curve: Curves.easeInOut,
         backgroundColor: Colors.white,
         color: Colors.blue,
         activeColor: Colors.blue,
-        height: 50,
+        // height: 0,
         // cornerRadius: 16,
         items: [
           TabItem(icon: Icons.av_timer, title: 'Timeline'),
@@ -142,6 +148,37 @@ class _HomeScreenState extends State<HomeScreen> {
               curve: Curves.easeInOutCubic);
         }),
       ),
+    );
+  }
+
+  void _settingModalBottomSheet(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        child: new Wrap(
+          children: <Widget>[
+            new ListTile(
+                leading: new Icon(Icons.score, color: Colors.blue),
+                title: new Text('Add New Scoreboard',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AddPostScreen(),
+                  ));
+                }),
+            new ListTile(
+              leading: new Icon(Icons.gamepad, color: Colors.blue),
+              title: new Text('Add New Fixture',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () => {Navigator.of(context).pop()},
+            ),
+          ],
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
     );
   }
 }

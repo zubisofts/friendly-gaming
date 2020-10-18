@@ -31,7 +31,7 @@ class TimelineData {
         comments: e['comments'],
         likes: e['likes'])).toList();
 
-    print(data);
+    // print(data);
 
     return data;
   }

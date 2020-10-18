@@ -1,23 +1,35 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/statistics_screen.dart';
+import 'package:shimmer/shimmer.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final User user;
 
   ProfileScreen({this.user});
 
   @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen>
+    with AutomaticKeepAliveClientMixin<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
-    context.bloc<DataBloc>().add(UserDataEvent(uid: user.id));
-    return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
+    context.bloc<DataBloc>().add(UserDataEvent(uid: widget.user.id));
+    return BlocConsumer<DataBloc, DataState>(
+      buildWhen: (previous, current) => current is UserDataState,
+      listener: (context, state) {},
+      builder: (context, state) {
       User user;
       if (state is UserDataState) {
         user = state.user;
-        print('*******************User: $user');
+        print(
+            'Users profile called here ******************************************');
       }
       return SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -34,7 +46,6 @@ class ProfileScreen extends StatelessWidget {
                 // width: 100,
                 // height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -47,30 +58,60 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: user?.photo != null
                     ? ClipOval(
-                        child: Image.network(
-                        '${user?.photo}',
-                        width: 150,
-                        height: 150,
-                        fit: BoxFit.cover,
-                      ))
+                        child: CachedNetworkImage(
+                          imageUrl: '${user.photo}',
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: Colors.grey[300],
+                            highlightColor: Colors.grey[100],
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        ),
+                      )
                     : ClipOval(
-                        child: Image.asset(
-                        'assets/images/profile_icon.png',
-                        width: 150,
-                        height: 150,
-                        fit: BoxFit.cover,
+                        child: Shimmer.fromColors(
+                        baseColor: Colors.grey[300],
+                        highlightColor: Colors.grey[100],
+                        child: state is UserDataState
+                            ? Container(
+                                width: 150,
+                                height: 150,
+                              )
+                            : Image.asset(
+                                'assets/images/profile_icon.png',
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ),
                       )),
               ),
               SizedBox(
                 height: 20,
               ),
-              Text(
-                '${user?.name ?? ''}',
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
+              user?.name != null
+                  ? Text(
+                      '${user?.name ?? ''}',
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    )
+                  : Shimmer.fromColors(
+                      baseColor: Colors.grey[300],
+                      highlightColor: Colors.grey[100],
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 20,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
               SizedBox(
                 height: 20,
               ),
@@ -216,4 +257,7 @@ class ProfileScreen extends StatelessWidget {
       );
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

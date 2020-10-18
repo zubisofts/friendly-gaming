@@ -1,10 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
+import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/timeline_data.dart';
+import 'package:friendly_gaming/src/model/user.dart';
+import 'package:friendly_gaming/src/repository/auth_repository.dart';
+import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'package:friendly_gaming/src/widgets/win_switch.dart';
 
 // ignore: must_be_immutable
 class TimelineCard extends StatefulWidget {
-  TimelineData timelineData;
+  Post timelineData;
 
   TimelineCard({this.timelineData});
 
@@ -39,18 +48,55 @@ class _TimelineCardState extends State<TimelineCard> {
                 flex: 1,
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage(
-                          'assets/images/${widget.timelineData.firstPlayerImageUrl}'),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      widget.timelineData.firstPlayer,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
+                    StreamBuilder<User>(
+                      stream: DataRepository()
+                          .userDetails(widget.timelineData.firstPlayerId),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          User user = snapshot.data;
+                          return Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundImage:
+                                    CachedNetworkImageProvider('${user.photo}'),
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Text(
+                                user.name,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.fade,
+                                maxLines: 1,
+                                softWrap: false,
+                              )
+                            ],
+                          );
+                        }
+                        // if (snapshot.error) {
+                        //   return Text('Error');
+                        // }
+                        return Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  AssetImage('assets/images/profile_icon.png'),
+                            ),
+                            SizedBox(
+                              height: 8.0,
+                            ),
+                            Text(
+                              '...',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                              softWrap: false,
+                            )
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -59,25 +105,62 @@ class _TimelineCardState extends State<TimelineCard> {
                   flex: 1,
                   child: Image.asset(
                     'assets/images/fifa.png',
-                    width: 40,
-                    height: 100,
+                    width: 20,
+                    height: 90,
                   )),
               Expanded(
                 flex: 1,
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage(
-                          'assets/images/${widget.timelineData.secondPlayerImageUrl}'),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      widget.timelineData.secondPlayer,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
+                    StreamBuilder<User>(
+                      stream: DataRepository()
+                          .userDetails(widget.timelineData.secondPlayerId),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          User user = snapshot.data;
+                          return Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundImage:
+                                    CachedNetworkImageProvider('${user.photo}'),
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Text(
+                                user.name,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.fade,
+                                maxLines: 1,
+                                softWrap: false,
+                              )
+                            ],
+                          );
+                        }
+                        // if (snapshot.error) {
+                        //   return Text('Error');
+                        // }
+                        return Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  AssetImage('assets/images/profile_icon.png'),
+                            ),
+                            SizedBox(
+                              height: 8.0,
+                            ),
+                            Text(
+                              '...',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                              softWrap: false,
+                            )
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -93,10 +176,15 @@ class _TimelineCardState extends State<TimelineCard> {
               Expanded(
                   flex: 1,
                   child: Text(
-                    '${widget.timelineData.firstPlayerScore}',
+                    '${widget.timelineData.gameType == 'FIFA' ? widget.timelineData.scores['firstPlayerScore'] : 'Nil'}',
                     style: TextStyle(
-                        color: widget.timelineData.firstPlayerScore >
-                                widget.timelineData.secondPlayerScore
+                        color: (widget.timelineData.scores['firstPlayerScore'] >
+                                    widget.timelineData
+                                        .scores['secondPlayerScore'] ||
+                                widget.timelineData
+                                        .scores['firstPlayerScore'] ==
+                                    widget.timelineData
+                                        .scores['secondPlayerScore'])
                             ? Colors.green
                             : Colors.black,
                         fontWeight: FontWeight.bold,
@@ -113,10 +201,15 @@ class _TimelineCardState extends State<TimelineCard> {
               Expanded(
                   flex: 1,
                   child: Text(
-                    '${widget.timelineData.secondPlayerScore}',
+                    '${widget.timelineData.scores['secondPlayerScore']}',
                     style: TextStyle(
-                        color: widget.timelineData.secondPlayerScore >
-                                widget.timelineData.firstPlayerScore
+                        color: (widget.timelineData.scores['secondPlayerScore'] >
+                                    widget.timelineData
+                                        .scores['firstPlayerScore'] ||
+                                widget.timelineData
+                                        .scores['firstPlayerScore'] ==
+                                    widget.timelineData
+                                        .scores['secondPlayerScore'])
                             ? Colors.green
                             : Colors.black,
                         fontWeight: FontWeight.bold,
@@ -129,8 +222,9 @@ class _TimelineCardState extends State<TimelineCard> {
             height: 8,
           ),
           WinSwitch(
-              firstPlayerScore: widget.timelineData.firstPlayerScore,
-              secondPlayerScore: widget.timelineData.secondPlayerScore),
+              firstPlayerScore: widget.timelineData.scores['firstPlayerScore'],
+              secondPlayerScore:
+                  widget.timelineData.scores['secondPlayerScore']),
           SizedBox(
             height: 8,
           ),
@@ -143,7 +237,7 @@ class _TimelineCardState extends State<TimelineCard> {
                   SizedBox(
                     width: 5,
                   ),
-                  Text('${widget.timelineData.likes}'),
+                  Text('200'),
                   SizedBox(
                     width: 16,
                   ),
@@ -151,7 +245,7 @@ class _TimelineCardState extends State<TimelineCard> {
                   SizedBox(
                     width: 5,
                   ),
-                  Text('${widget.timelineData.comments}'),
+                  Text('50'),
                 ],
               ),
               IconButton(

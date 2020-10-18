@@ -1,31 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:friendly_gaming/src/model/timeline_data.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/widgets/timeline_card.dart';
 
 class TimelineScreen extends StatefulWidget {
+  const TimelineScreen({
+    Key key,
+  }) : super(key: key);
+
   @override
   _TimelineScreenState createState() => _TimelineScreenState();
 }
 
-class _TimelineScreenState extends State<TimelineScreen> {
+class _TimelineScreenState extends State<TimelineScreen>
+    with AutomaticKeepAliveClientMixin<TimelineScreen> {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    context.bloc<DataBloc>().add(FetchPostEvent());
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
       ),
-      child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Container(
-          margin: EdgeInsets.only(bottom: 50),
-          child: Column(
-              children: TimelineData.getTimelines()
-                  .map((timelineData) => TimelineCard(
-                        timelineData: timelineData,
-                      ))
-                  .toList()),
-        ),
-      ),
+      child: BlocConsumer<DataBloc,DataState>(
+        buildWhen: (previous, current) => current is PostsFetchedState,
+        builder:  (context, state) {
+          if (state is PostsFetchedState) {
+            print('--------------------***------------------**');
+            return ListView.builder(
+              addAutomaticKeepAlives: true,
+              physics: BouncingScrollPhysics(),
+              itemCount: state.posts.length,
+              itemBuilder: (context, index) {
+                var posts = state.posts;
+                return Padding(
+                  padding: EdgeInsets.only(
+                      bottom: index == posts.length - 1 ? 0.0 : 0.0),
+                  child: TimelineCard(
+                    timelineData: posts[index],
+                  ),
+                );
+              },
+            );
+          } else {
+            print('----Other State---$state-------');
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+         listener: (context, state) {
+           
+         },),
     );
   }
 }
