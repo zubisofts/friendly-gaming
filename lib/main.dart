@@ -39,7 +39,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Friendly Gaming',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          // brightness: Brightness.light,
+          primarySwatch: Colors.blueGrey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         // home: SplashScreen(),

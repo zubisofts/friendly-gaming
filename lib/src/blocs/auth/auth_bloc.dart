@@ -24,6 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool isNameValid = true;
 
   AuthBloc({this.authenticationRepository}) : super(AuthInitial()) {
+    _authStateChangesSubcription?.cancel();
     _authStateChangesSubcription = authenticationRepository.user.listen((user) {
       add(AuthStateChangedEvent(user: user));
       print('Something changed:${user?.name}');
@@ -45,24 +46,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (event is OnSubmitSignupDetailsEvent) {
-      if(event.which == 1){
+      if (event.which == 1) {
         name = event.name;
       }
 
-      if(event.which==2){
+      if (event.which == 2) {
         email = event.email;
       }
 
-      if(event.which==3){
+      if (event.which == 3) {
         password = event.password;
       }
 
-      if(event.which == 0) {
+      if (event.which == 0) {
         photo = event.photo;
       }
 
       yield* _mapSubmitSignupFormDetailsToState();
-
     }
 
     if (event is LoginWithEmailAndPasswordEvent) {
@@ -77,15 +77,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield* _mapLoginWithGoogleEventToState();
     }
 
-    if(event is SignupWithFacebokEvent){
+    if (event is SignupWithFacebokEvent) {
       yield* _mapSignupWithFacebookEventToState();
     }
 
-    if(event is LoginWithFacebokEvent){
+    if (event is LoginWithFacebokEvent) {
       yield* _mapLoginWithFacebokEventToState();
     }
 
-    if(event is SignupWithGoogleEvent){
+    if (event is SignupWithGoogleEvent) {
       yield* _mapSignupWithGoogleEventToState();
     }
 
@@ -94,9 +94,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (event is AuthStateChangedEvent) {
-        // var user =event.user?.id !=null ? await new DataRepository().user(event.user.id):null;
-        yield AuthStateChangedState(user: event.user);
-
+      // var user =event.user?.id !=null ? await new DataRepository().user(event.user.id):null;
+      yield AuthStateChangedState(user: event.user);
     }
   }
 
@@ -125,7 +124,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       bool passwordRes = passwordRegExp.hasMatch(password);
       isPasswordValid = passwordRes;
     }
-
 
     yield OnLoginFormSubmittedState(
         emailRes: isEmailValid,
@@ -157,7 +155,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       isPasswordValid = passwordRes;
     }
 
-    if(name != null) {
+    if (name != null) {
       bool nameRes = name.length > 0;
       isNameValid = nameRes;
     }
@@ -172,41 +170,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         photo: photo);
   }
 
-  Stream<AuthState> _mapSignupWithEmailAndPasswordEventToState() async*{
-    try{
+  Stream<AuthState> _mapSignupWithEmailAndPasswordEventToState() async* {
+    try {
       yield AuthLoadingState();
-      var user = await authenticationRepository.signUp(name: name, email: email, password: password,photo: photo);
+      var user = await authenticationRepository.signUp(
+          name: name, email: email, password: password, photo: photo);
       // print('Signedup User email:${user?.email}');
       // await authenticationRepository.logInWithEmailAndPassword(email: user?.email, password: password);
       yield AuthStateChangedState(user: user);
-    }on SignUpFailure catch(e){
+    } on SignUpFailure catch (e) {
       print(e.message);
     }
   }
 
-  Stream<AuthState> _mapSignupWithGoogleEventToState() async*{
-    try{
+  Stream<AuthState> _mapSignupWithGoogleEventToState() async* {
+    try {
       yield AuthLoadingState();
       var user = await authenticationRepository.signupWithGoogle();
-    }on SignUpFailure catch(e){
+    } on SignUpFailure catch (e) {
       yield AuthErrorState(errorMessage: e.message);
       print(e.message);
     }
   }
 
- Stream<AuthState> _mapSignupWithFacebookEventToState() async*{
-   try{
-     await authenticationRepository.SignupUserWithFBCredentials();
-   }on LogInWithFacebookFailure catch(ex){
-     yield AuthErrorState(errorMessage: ex.message);
-   }
- }
-
- Stream<AuthState> _mapLoginWithFacebokEventToState() async*{
-    try{
-      await authenticationRepository.loginUserWithFBCredentials();
-    }on LogInWithFacebookFailure catch(ex){
-        yield AuthErrorState(errorMessage: ex.message);
+  Stream<AuthState> _mapSignupWithFacebookEventToState() async* {
+    try {
+      await authenticationRepository.SignupUserWithFBCredentials();
+    } on LogInWithFacebookFailure catch (ex) {
+      yield AuthErrorState(errorMessage: ex.message);
     }
- }
+  }
+
+  Stream<AuthState> _mapLoginWithFacebokEventToState() async* {
+    try {
+      await authenticationRepository.loginUserWithFBCredentials();
+    } on LogInWithFacebookFailure catch (ex) {
+      yield AuthErrorState(errorMessage: ex.message);
+    }
+  }
 }

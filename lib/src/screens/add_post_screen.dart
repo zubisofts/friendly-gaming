@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
+import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/homescreen.dart';
 import 'package:friendly_gaming/src/widgets/avatar.dart';
@@ -29,7 +31,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void initState() {
     selectedGameKey = "FIFA";
     User user = User(
-        email: '', id: '', photo: 'https://www.valiance.gg/images/089e0ea.png');
+        email: '',
+        id: '',
+        photo: 'https://www.valiance.gg/images/089e0ea.png',
+        name: null);
     firstPlayer = user;
     secondPlayer = user;
     context.bloc<DataBloc>().add(FetchUsersEvent());
@@ -86,351 +91,392 @@ class _AddPostScreenState extends State<AddPostScreen> {
               Navigator.pop(context);
             }),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          // margin: EdgeInsets.all(16.0),
-          // padding: EdgeInsets.all(8.0),
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12.0)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              PlayerSelectionWidget((user, isFirstPlayer) {
-                setState(() {
-                  if (isFirstPlayer) {
-                    firstPlayer = user;
-                    print('First Player:$firstPlayer');
-                  } else {
-                    secondPlayer = user;
-                    print('Second Player:$secondPlayer');
-                  }
-                });
-              }),
-              SizedBox(height: 24.0),
-              Text(
-                'Above Selected',
-                style: TextStyle(
-                    color: Colors.yellow[700],
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w800),
-              ),
-              SizedBox(
-                height: 24.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              // margin: EdgeInsets.all(16.0),
+              // padding: EdgeInsets.all(8.0),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Avatar(
-                      size: 120,
-                      image: '${firstPlayer?.photo}',
-                      name: '${firstPlayer?.name ?? 'Player 1'}'),
+                  PlayerSelectionWidget((user, isFirstPlayer) {
+                    setState(() {
+                      if (isFirstPlayer) {
+                        firstPlayer = user;
+                        print('First Player:$firstPlayer');
+                      } else {
+                        secondPlayer = user;
+                        print('Second Player:$secondPlayer');
+                      }
+                    });
+                  }),
+                  SizedBox(height: 24.0),
                   Text(
-                    'VS',
+                    'Above Selected',
                     style: TextStyle(
                         color: Colors.yellow[700],
                         fontSize: 24.0,
                         fontWeight: FontWeight.w800),
                   ),
-                  Avatar(
-                      size: 120,
-                      image: '${secondPlayer?.photo}',
-                      name: '${secondPlayer?.name ?? 'Player 2'}'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    'Score',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w800),
+                  SizedBox(
+                    height: 24.0,
                   ),
-                  Text(
-                    'Score',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w800),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Avatar(
+                          size: 120,
+                          image: '${firstPlayer?.photo}',
+                          name: '${firstPlayer?.name ?? 'Player 1'}'),
+                      Text(
+                        'VS',
+                        style: TextStyle(
+                            color: Colors.yellow[700],
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      Avatar(
+                          size: 120,
+                          image: '${secondPlayer?.photo}',
+                          name: '${secondPlayer?.name ?? 'Player 2'}'),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(
-                height: 18.0,
-              ),
-              games[selectedGameKey],
-              SizedBox(height: 32.0),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Select Games',
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: 16.0,
-                    ),
-                    Expanded(
-                      child: Form(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        'Score',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        'Score',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 18.0,
+                  ),
+                  games[selectedGameKey],
+                  SizedBox(height: 32.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Select Games',
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 16.0,
+                        ),
+                        Expanded(
+                          child: Form(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(24.0),
+                                child: TextField(
+                                    decoration: InputDecoration(
+                                        filled: true,
+                                        hintText: 'Search Game',
+                                        border: InputBorder.none,
+                                        // focusedBorder: InputBorder.none,
+                                        prefixIcon: Icon(Icons.search),
+                                        fillColor: Colors.grey[100])),
+                              ),
+                            ),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(24.0),
-                            child: TextField(
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    hintText: 'Search Game',
-                                    border: InputBorder.none,
-                                    // focusedBorder: InputBorder.none,
-                                    prefixIcon: Icon(Icons.search),
-                                    fillColor: Colors.grey[100])),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                      margin: EdgeInsets.symmetric(horizontal: 8.0),
+                      width: MediaQuery.of(context).size.width,
+                      child: GameSelector(
+                        onGameSelected: (game) {
+                          setState(() {
+                            selectedGameKey = game;
+                          });
+                        },
+                      )),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('Add Images',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18))),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            images[0] = await getImage();
+                            setState(() {});
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 70,
+                                height: 70,
+                                padding: EdgeInsets.all(8.0),
+                                child: DottedBorder(
+                                  // padding: EdgeInsets.all(16.0),
+                                  color: Colors.grey,
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: images[0] != null
+                                            ? Image.file(
+                                                File(images[0]),
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : SizedBox.shrink(),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              images[0] != null
+                                  ? Positioned(
+                                      right: 0,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            images[0] = null;
+                                          });
+                                        },
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.red,
+                                            ),
+                                            child: Icon(Icons.close,
+                                                color: Colors.white)),
+                                      ))
+                                  : SizedBox.shrink()
+                            ],
                           ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8.0),
-                  width: MediaQuery.of(context).size.width,
-                  child: GameSelector(
-                    onGameSelected: (game) {
-                      setState(() {
-                        selectedGameKey = game;
-                      });
-                    },
-                  )),
-              SizedBox(
-                height: 16.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('Add Images',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18))),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        images[0] = await getImage();
-                        setState(() {});
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 70,
-                            padding: EdgeInsets.all(8.0),
-                            child: DottedBorder(
-                              // padding: EdgeInsets.all(16.0),
-                              color: Colors.grey,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: images[0] != null
-                                        ? Image.file(
-                                            File(images[0]),
-                                            width: 40,
-                                            height: 40,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : SizedBox.shrink(),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          images[0] != null
-                              ? Positioned(
-                                  right: 0,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        images[0] = null;
-                                      });
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red,
+                        InkWell(
+                          onTap: () async {
+                            images[1] = await getImage();
+                            setState(() {});
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 70,
+                                height: 70,
+                                padding: EdgeInsets.all(8.0),
+                                child: DottedBorder(
+                                  // padding: EdgeInsets.all(16.0),
+                                  color: Colors.grey,
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: images[1] != null
+                                            ? Image.file(
+                                                File(images[1]),
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : SizedBox.shrink(),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Colors.grey,
                                         ),
-                                        child: Icon(Icons.close,
-                                            color: Colors.white)),
-                                  ))
-                              : SizedBox.shrink()
-                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              images[1] != null
+                                  ? Positioned(
+                                      right: 0,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            images[1] = null;
+                                          });
+                                        },
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.red,
+                                            ),
+                                            child: Icon(Icons.close,
+                                                color: Colors.white)),
+                                      ))
+                                  : SizedBox.shrink()
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            images[2] = await getImage();
+                            setState(() {});
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 70,
+                                height: 70,
+                                padding: EdgeInsets.all(8.0),
+                                child: DottedBorder(
+                                  // padding: EdgeInsets.all(16.0),
+                                  color: Colors.grey,
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: images[2] != null
+                                            ? Image.file(
+                                                File(images[2]),
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : SizedBox.shrink(),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              images[2] != null
+                                  ? Positioned(
+                                      right: 0,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            images[2] = null;
+                                          });
+                                        },
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.red,
+                                            ),
+                                            child: Icon(Icons.close,
+                                                color: Colors.white)),
+                                      ))
+                                  : SizedBox.shrink()
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin:
+                        EdgeInsets.symmetric(vertical: 32, horizontal: 16.0),
+                    width: MediaQuery.of(context).size.width,
+                    child: FlatButton(
+                      padding: EdgeInsets.symmetric(vertical: 18),
+                      onPressed: () {
+                        context.bloc<DataBloc>().add(AddPostEvent(Post(
+                            firstPlayerId: firstPlayer.id,
+                            secondPlayerId: secondPlayer.id,
+                            images: images,
+                            scores: scores,
+                            gameType: selectedGameKey,
+                            date: DateTime.now())));
+                      },
+                      child: Text(
+                        'POST',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0),
                       ),
                     ),
-                    InkWell(
-                      onTap: () async {
-                        images[1] = await getImage();
-                        setState(() {});
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 70,
-                            padding: EdgeInsets.all(8.0),
-                            child: DottedBorder(
-                              // padding: EdgeInsets.all(16.0),
-                              color: Colors.grey,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: images[1] != null
-                                        ? Image.file(
-                                            File(images[1]),
-                                            width: 40,
-                                            height: 40,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : SizedBox.shrink(),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          images[1] != null
-                              ? Positioned(
-                                  right: 0,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        images[1] = null;
-                                      });
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red,
-                                        ),
-                                        child: Icon(Icons.close,
-                                            color: Colors.white)),
-                                  ))
-                              : SizedBox.shrink()
-                        ],
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        images[2] = await getImage();
-                        setState(() {});
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 70,
-                            padding: EdgeInsets.all(8.0),
-                            child: DottedBorder(
-                              // padding: EdgeInsets.all(16.0),
-                              color: Colors.grey,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: images[2] != null
-                                        ? Image.file(
-                                            File(images[2]),
-                                            width: 40,
-                                            height: 40,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : SizedBox.shrink(),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          images[2] != null
-                              ? Positioned(
-                                  right: 0,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        images[2] = null;
-                                      });
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red,
-                                        ),
-                                        child: Icon(Icons.close,
-                                            color: Colors.white)),
-                                  ))
-                              : SizedBox.shrink()
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 32, horizontal: 16.0),
-                width: MediaQuery.of(context).size.width,
-                child: FlatButton(
-                  padding: EdgeInsets.symmetric(vertical: 18),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
-                  },
-                  child: Text(
-                    'POST',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
-                  ),
-                ),
-              )
-            ],
+            ),
           ),
-        ),
+          BlocConsumer<DataBloc, DataState>(
+            listener: (context, state) {
+              if (state is PostSavedState) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('Post saved with ID:${state.postId}'),
+                ));
+                Navigator.of(context).pop();
+              }
+            },
+            builder: (context, state) {
+              if (state is PostSavingState) {
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  color: Colors.white.withOpacity(0.5),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        Text('Saving Post...')
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return SizedBox.shrink();
+            },
+          )
+        ],
       ),
     );
   }
