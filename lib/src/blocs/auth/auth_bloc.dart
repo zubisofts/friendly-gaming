@@ -23,6 +23,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool isPasswordValid = true;
   bool isNameValid = true;
 
+  static String uid = '';
+
   AuthBloc({this.authenticationRepository}) : super(AuthInitial()) {
     _authStateChangesSubcription?.cancel();
     _authStateChangesSubcription = authenticationRepository.user.listen((user) {
@@ -95,6 +97,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (event is AuthStateChangedEvent) {
       // var user =event.user?.id !=null ? await new DataRepository().user(event.user.id):null;
+      uid = event.user.id;
       yield AuthStateChangedState(user: event.user);
     }
   }

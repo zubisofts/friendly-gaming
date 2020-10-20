@@ -9,7 +9,7 @@ import 'package:friendly_gaming/src/repository/auth_repository.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'src/screens/splashscreen.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   EquatableConfig.stringify = kDebugMode;
   // Bloc.observer = SimpleBlocObserver();
@@ -23,7 +23,7 @@ void main() async{
 class MyApp extends StatelessWidget {
   final AuthenticationRepository authenticationRepository =
       AuthenticationRepository();
-  final DataRepository dataRepository=DataRepository();
+  final DataRepository dataRepository = DataRepository();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Friendly Gaming',
         theme: ThemeData(
-          // brightness: Brightness.light,
+          // brightness: Brightness.dark,
           primarySwatch: Colors.blueGrey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

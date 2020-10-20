@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
@@ -41,8 +42,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     }
 
     if (event is FetchPostEvent) {
-      print(
-          '****************************Fetch Post Data *************************');
+      
       yield* _mapFetchPostsEventToState();
     }
 
@@ -71,7 +71,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   Stream<DataState> _mapFetchUsersEventToState() async* {
     try {
       yield UsersLoadingState();
-      List<User> users = await dataRepository.users;
+      List<User> users = await dataRepository.users(uid:AuthBloc.uid);
       yield UsersFetchedState(users: users);
     } catch (e) {}
   }
@@ -79,7 +79,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   Stream<DataState> _mapSearchUserEventToState(String query) async* {
     try {
       yield UsersLoadingState();
-      List<User> users = await dataRepository.searchUsers(query);
+      List<User> users = await dataRepository.searchUsers(query,uid:AuthBloc.uid);
       yield UsersFetchedState(users: users);
     } catch (e) {}
   }

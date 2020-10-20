@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/widgets/timeline_card.dart';
 
@@ -25,9 +26,9 @@ class _TimelineScreenState extends State<TimelineScreen>
       decoration: BoxDecoration(
         color: Colors.grey[200],
       ),
-      child: BlocConsumer<DataBloc,DataState>(
+      child: BlocConsumer<DataBloc, DataState>(
         buildWhen: (previous, current) => current is PostsFetchedState,
-        builder:  (context, state) {
+        builder: (context, state) {
           if (state is PostsFetchedState) {
             print('--------------------***------------------**');
             return ListView.builder(
@@ -47,12 +48,17 @@ class _TimelineScreenState extends State<TimelineScreen>
             );
           } else {
             print('----Other State---$state-------');
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: SpinKitDualRing(
+                color: Colors.blueGrey,
+                size: 36,
+                lineWidth: 2,
+              ),
+            );
           }
         },
-         listener: (context, state) {
-           
-         },),
+        listener: (context, state) {},
+      ),
     );
   }
 }

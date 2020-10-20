@@ -86,28 +86,31 @@ class DataRepository {
         .map((doc) => User.fromJson(doc.data()));
   }
 
-  Future<List<User>> get users async {
+  Future<List<User>> users({String uid}) async {
     try {
       var querySnapshot =
           await FirebaseFirestore.instance.collection("users").get();
       return querySnapshot.docs
           .map((doc) => User.fromJson(doc.data()))
+          .where((user) => uid != user.id)
           .toList();
     } catch (e) {
       print(e);
+      return null;
     }
   }
 
-  Future<List<User>> searchUsers(String query) async {
+  Future<List<User>> searchUsers(String query, {String uid}) async {
     print(query);
     try {
       var querySnapshot =
           await FirebaseFirestore.instance.collection("users").get();
       // print(querySnapshot.docs.length);
       return querySnapshot.docs
-          .map((e) => User.fromJson(e.data()))
-          .where((element) =>
-              element.name.toLowerCase().startsWith(query.toLowerCase()))
+          .map((doc) => User.fromJson(doc.data()))
+          .where(
+              (user) => user.name.toLowerCase().startsWith(query.toLowerCase()))
+          .where((user) => uid != user.id)
           .toList();
     } catch (e) {
       print(e);

@@ -5,6 +5,7 @@ import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
+import 'package:friendly_gaming/src/screens/new_challenge.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
 import 'package:friendly_gaming/src/screens/timeline_screen.dart';
 
@@ -169,9 +170,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 }),
             new ListTile(
               leading: new Icon(Icons.gamepad, color: Colors.blue),
-              title: new Text('Add New Fixture',
+              title: new Text('New Game Challenge',
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              onTap: () => {Navigator.of(context).pop()},
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => NewChallenge()));
+                
+              },
             ),
           ],
         ),
