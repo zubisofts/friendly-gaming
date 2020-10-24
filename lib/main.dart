@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,16 +15,41 @@ void main() async {
   EquatableConfig.stringify = kDebugMode;
   // Bloc.observer = SimpleBlocObserver();
   await Firebase.initializeApp();
-
-  // final FirebaseStorage storage = FirebaseStorage(
-  //     app: app, storageBucket: 'gs://flutter-firebase-plugins.appspot.com');
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   final AuthenticationRepository authenticationRepository =
       AuthenticationRepository();
+
   final DataRepository dataRepository = DataRepository();
+
+  @override
+  void initState() {
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+      },
+      // onBackgroundMessage: myBackgroundMessageHandler,
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

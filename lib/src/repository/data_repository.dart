@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:friendly_gaming/src/model/post.dart';
+import 'package:friendly_gaming/src/model/request.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -166,7 +167,25 @@ class DataRepository {
     }
   }
 
-  Future<List<Post>> convertSnapshots(QuerySnapshot snapshots) async {
+  // Requests
+  Future<String> sendRequest(Request request) async {
+    try {
+      print('***Sending Request**');
+      var documentReference = await FirebaseFirestore.instance
+          .collection("requests")
+          .doc(request.receiverId)
+          .collection('game_requests')
+          .add(request.toMap());
+      Map<String, String> update = {'requestId': documentReference.id};
+      documentReference.update(update);
+      return documentReference.id;
+      //
+    } on FirebaseException catch (ex) {
+      return null;
+    }
+  }
+  // Or do other work.
+Future<List<Post>> convertSnapshots(QuerySnapshot snapshots) async {
     return snapshots.docs.map((doc) {
       return Post.fromMap(doc.data());
     }).toList();

@@ -50,3 +50,27 @@ class PostsFetchedState extends DataState {
   @override
   List<Object> get props => [posts];
 }
+
+class SendingRequestState extends DataState{
+   @override
+  List<Object> get props => [];
+}
+
+class RequestSentState extends DataState {
+  final String requestId;
+  RequestSentState({this.requestId});
+  @override
+  List<Object> get props => [requestId];
+}
+
+class RequestError extends DataState {
+  final String error;
+  RequestError({this.error});
+  @override
+  List<Object> get props => [error];
+}
+
+class RefreshState extends DataState{
+  @override
+  List<Object> get props => [];
+}

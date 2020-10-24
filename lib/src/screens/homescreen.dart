@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,16 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
-              return IconButton(
-                  icon: Icon(
-                    Icons.exit_to_app,
-                    color: Colors.black,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    context.bloc<AuthBloc>().add(LogoutEvent());
-                    // Navigator.pop(context, ModalRoute.withName('/login'));
-                  });
+              return  Badge(
+                position: BadgePosition.topEnd(top: 30, end: 12),
+                animationDuration: Duration(milliseconds: 300),
+                animationType: BadgeAnimationType.slide,
+                child: IconButton(icon: Icon(Icons.notifications,color:Colors.blueGrey), onPressed: () {}),
+              );
             },
           ),
         ],
@@ -123,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 // scaffoldKey.currentState
                 // .showSnackBar(SnackBar(content: Text('heloo')));
-                _settingModalBottomSheet(context);
+                _showModalBottomSheet(context);
               })
           : SizedBox.shrink(),
       bottomNavigationBar: ConvexAppBar(
@@ -152,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _settingModalBottomSheet(context) {
+  void _showModalBottomSheet(context) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(

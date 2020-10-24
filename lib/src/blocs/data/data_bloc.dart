@@ -5,18 +5,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/model/post.dart';
+import 'package:friendly_gaming/src/model/request.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
+import 'package:meta/meta.dart';
 
 part 'data_event.dart';
+
 part 'data_state.dart';
 
 class DataBloc extends Bloc<DataEvent, DataState> {
   DataRepository dataRepository;
-  StreamSubscription<List<Post>> _postsStateChangesSubcription;
+  StreamSubscription<List<Post>> _postsStateChangesSubscription;
+  StreamSubscription<User> _userDetailsChangesSubscription;
 
-  DataBloc({this.dataRepository}) : super(DataInitial()){
-    _postsStateChangesSubcription = dataRepository.posts.listen((posts) {
+  DataBloc({this.dataRepository}) : super(DataInitial()) {
+    _postsStateChangesSubscription = dataRepository.posts.listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
   }
@@ -33,6 +37,16 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       yield* _mapFetchUsersEventToState();
     }
 
+    if(event is FetchUserDetailsEvent){
+      _userDetailsChangesSubscription = dataRepository.userDetails(event.uid).listen((user) {
+        add(UserFetchedEvent(user:user));
+      });
+    }
+
+    if(event is UserFetchedEvent){
+      yield UserDataState(user: event.user);
+    }
+
     if (event is SearchUserEvent) {
       yield* _mapSearchUserEventToState(event.query);
     }
@@ -42,18 +56,32 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     }
 
     if (event is FetchPostEvent) {
-      
       yield* _mapFetchPostsEventToState();
     }
 
     if (event is PostFetchedEvent) {
       yield PostsFetchedState(posts: event.posts);
     }
+
+    if (event is SendRequestEvent) {
+      yield* _mapSendRequestEventToState(Request(
+        receiverId: event.receiverId,
+        senderId: AuthBloc.uid,
+        date: DateTime(DateTime.now().millisecondsSinceEpoch),
+        requestType: event.requestType,
+        status: RequestStatus.Pending.toString().split('.').last,
+      ));
+    }
+
+    if (event is RefreshEvent) {
+      yield RefreshState();
+    }
   }
 
   @override
   Future<void> close() {
-    _postsStateChangesSubcription?.cancel();
+    _postsStateChangesSubscription?.cancel();
+    _userDetailsChangesSubscription?.cancel();
     return super.close();
   }
 
@@ -66,12 +94,13 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       print(
           '****************************Fetch User Data Error*************************');
     }
+
   }
 
   Stream<DataState> _mapFetchUsersEventToState() async* {
     try {
       yield UsersLoadingState();
-      List<User> users = await dataRepository.users(uid:AuthBloc.uid);
+      List<User> users = await dataRepository.users(uid: AuthBloc.uid);
       yield UsersFetchedState(users: users);
     } catch (e) {}
   }
@@ -79,7 +108,8 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   Stream<DataState> _mapSearchUserEventToState(String query) async* {
     try {
       yield UsersLoadingState();
-      List<User> users = await dataRepository.searchUsers(query,uid:AuthBloc.uid);
+      List<User> users =
+          await dataRepository.searchUsers(query, uid: AuthBloc.uid);
       yield UsersFetchedState(users: users);
     } catch (e) {}
   }
@@ -93,9 +123,19 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   }
 
   Stream<DataState> _mapFetchPostsEventToState() async* {
-    _postsStateChangesSubcription?.cancel();
-    _postsStateChangesSubcription = dataRepository.posts.listen((posts) {
+    _postsStateChangesSubscription?.cancel();
+    _postsStateChangesSubscription = dataRepository.posts.listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
+  }
+
+  Stream<DataState> _mapSendRequestEventToState(Request request) async* {
+    try {
+      yield SendingRequestState();
+      var requestId = await dataRepository.sendRequest(request);
+      yield RequestSentState(requestId: requestId);
+    } on FirebaseException catch (e) {
+      yield RequestError(error: e.message);
+    }
   }
 }

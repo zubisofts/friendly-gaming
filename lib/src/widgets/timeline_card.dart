@@ -22,6 +22,17 @@ class TimelineCard extends StatefulWidget {
 }
 
 class _TimelineCardState extends State<TimelineCard> {
+
+  Stream firstUserStream;
+  Stream secondUserStream;
+
+  @override
+  void initState() {
+    firstUserStream=DataRepository().userDetails(widget.timelineData.firstPlayerId);
+    secondUserStream=DataRepository().userDetails(widget.timelineData.secondPlayerId);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,11 +57,9 @@ class _TimelineCardState extends State<TimelineCard> {
             children: [
               Expanded(
                 flex: 1,
-                child: Column(
-                  children: [
+                child: Column( children: [
                     StreamBuilder<User>(
-                      stream: DataRepository()
-                          .userDetails(widget.timelineData.firstPlayerId),
+                      stream: firstUserStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           User user = snapshot.data;
@@ -113,8 +122,7 @@ class _TimelineCardState extends State<TimelineCard> {
                 child: Column(
                   children: [
                     StreamBuilder<User>(
-                      stream: DataRepository()
-                          .userDetails(widget.timelineData.secondPlayerId),
+                      stream: secondUserStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           User user = snapshot.data;

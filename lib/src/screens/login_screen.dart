@@ -85,8 +85,7 @@ class LoginScreen extends StatelessWidget {
                       height: 8,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         InkWell(
                           onTap: () => context
@@ -98,11 +97,7 @@ class LoginScreen extends StatelessWidget {
                             child: Image.asset('assets/icons/fb.png'),
                           ),
                         ),
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.white,
-                          child: Image.asset('assets/icons/twitter1.png'),
-                        ),
+                        SizedBox(width: 16.0,),
                         InkWell(
                           onTap: () => context
                               .bloc<AuthBloc>()
@@ -153,15 +148,16 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SpinKitWanderingCubes(
+                      SpinKitDualRing(
                         color: Colors.blue,
-                        size: 70.0,
+                        size: 50.0,
+                        lineWidth: 3,
                       ),
                       SizedBox(
                         height: 16.0,
                       ),
                       Text(
-                        'Loading',
+                        'Signing In',
                         style: TextStyle(
                             fontSize: 18.0, fontWeight: FontWeight.bold),
                       )
@@ -276,12 +272,13 @@ class LoginButton extends StatelessWidget {
             margin: EdgeInsets.only(top: 32),
             width: MediaQuery.of(context).size.width,
             child: FlatButton(
+              disabledColor: Colors.grey[300],
               padding: EdgeInsets.symmetric(vertical: 18),
               onPressed: emailRes && passwordRes
                   ? () => context
                       .bloc<AuthBloc>()
                       .add(LoginWithEmailAndPasswordEvent())
-                  : () {},
+                  : null,
               child: Text(
                 'LOGIN',
                 style: TextStyle(color: Colors.white),
