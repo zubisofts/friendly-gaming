@@ -81,4 +81,51 @@ class SendRequestEvent extends DataEvent {
   List<Object> get props => [requestType, receiverId];
 }
 
+class FetchRequestsEvent extends DataEvent{
+  @override
+  List<Object> get props => [];
+}
+
+class RequestsFetchedEvent extends DataEvent{
+  final List<Request> requests;
+  RequestsFetchedEvent({this.requests});
+  @override
+  List<Object> get props => [requests];
+}
+
+class RequestResponseEvent extends DataEvent {
+  final bool accept;
+  final Request request;
+  RequestResponseEvent({this.accept,this.request});
+
+  @override
+  List<Object> get props => [accept,request];
+}
+
 class RefreshEvent extends DataEvent {}
+
+class FetchNotificationEvent extends DataEvent {}
+
+class NotificationsFetchedEvent extends DataEvent {
+  final List<FGNotification> notifications;
+
+  NotificationsFetchedEvent({this.notifications});
+
+  @override
+  List<Object> get props => [notifications];
+}
+
+class IncomingCallEvent extends DataEvent {
+
+  @override
+  List<Object> get props => [];
+}
+
+class SendIncomingCallEvent extends DataEvent {
+  final Call call;
+
+  SendIncomingCallEvent({this.call});
+
+  @override
+  List<Object> get props => [call];
+}

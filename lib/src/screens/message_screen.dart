@@ -1,12 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_gaming/src/model/message.dart';
+import 'package:friendly_gaming/src/model/user.dart';
+import 'package:friendly_gaming/src/screens/dial_screen.dart';
+import 'package:friendly_gaming/src/screens/incoming_call_screen.dart';
 import 'package:friendly_gaming/src/widgets/chat_input.dart';
 import 'package:friendly_gaming/src/widgets/message_row_widget.dart';
 
 class MessageScreen extends StatefulWidget {
   final List<Message> messages;
+  final User user;
 
-  MessageScreen({this.messages});
+  MessageScreen({this.messages, this.user});
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -22,46 +27,55 @@ class _MessageScreenState extends State<MessageScreen> {
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16))),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.color,
         elevation: 0,
         centerTitle: true,
-        title: Column(
+        // automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            CircleAvatar(
-              radius: 24.0,
-              backgroundImage: AssetImage("assets/images/img2.jpg"),
+            Expanded(
+              flex: 1,
+              child: CircleAvatar(
+                radius: 40.0,
+                backgroundImage: CachedNetworkImageProvider(widget.user.photo),
+              ),
             ),
-            SizedBox(
-              height: 5.0,
+            SizedBox(width:8),            
+            Expanded(
+              flex: 5,
+              child: Text('${widget.user.name}',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).textTheme.headline6.color)),
             ),
-            Text('Add Post',
-                style: TextStyle(fontSize: 16, color: Colors.black))
           ],
         ),
-        leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.blue,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-                itemCount: widget.messages.length,
-                itemBuilder: (context, index) =>
-                    MessageRowWidget(widget.messages[index])),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.video_call,
+                color: Theme.of(context).iconTheme.color),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => DialScreen(user:widget.user))),
           ),
-          Container(
-              width: MediaQuery.of(context).size.width,
-              height: 50,
-              child: ChatInput(),
-              )
         ],
       ),
+      body: Center(child: Text('Messages')),
+      //  Column(
+      //   children: [
+      //     Expanded(
+      //       child: ListView.builder(
+      //           itemCount: widget.messages.length,
+      //           itemBuilder: (context, index) =>
+      //               MessageRowWidget(widget.messages[index])),
+      //     ),
+      //     Container(
+      //       width: MediaQuery.of(context).size.width,
+      //       height: 50,
+      //       child: ChatInput(),
+      //     )
+      //   ],
+      // ),
     );
   }
 }

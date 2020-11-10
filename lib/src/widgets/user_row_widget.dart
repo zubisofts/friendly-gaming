@@ -13,7 +13,7 @@ class UserRowWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4.0,horizontal: 16.0),
       decoration: BoxDecoration(
-        color: Colors.white
+        color: Theme.of(context).cardTheme.color
       ),
       child: ListTile(
         onTap:()=> onTap(user),
@@ -23,8 +23,12 @@ class UserRowWidget extends StatelessWidget {
           backgroundImage: CachedNetworkImageProvider(user.photo),
         ),
         title: Text(user.name,
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-        subtitle: Text(user.email),
+            style: TextStyle(
+              color: Theme.of(context).textTheme.headline6.color,
+                fontSize: 16.0, fontWeight: FontWeight.bold)),
+        subtitle: Text(user.email,style: TextStyle(
+            color: Theme.of(context).textTheme.subtitle2.color,
+            fontSize: 12.0, fontWeight: FontWeight.bold)),
       ),
     );
   }

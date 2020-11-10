@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
+import 'package:friendly_gaming/src/model/call.dart';
+import 'package:friendly_gaming/src/model/notification.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/request.dart';
 import 'package:friendly_gaming/src/model/user.dart';
@@ -10,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 
 class StorageException implements Exception {
   final String message;
+
   StorageException({this.message});
 }
 
@@ -178,16 +182,104 @@ class DataRepository {
           .add(request.toMap());
       Map<String, String> update = {'requestId': documentReference.id};
       documentReference.update(update);
+
+      User sender = await user(request.senderId);
+
+      FGNotification notification = FGNotification(
+          title: 'New Challenge',
+          description: 'You received a new game challenge from ${sender.name}',
+          actionIntentId: documentReference.id,
+          type: NotificationType.Challenge.toString().split('.').last,
+          read: false,
+          time: DateTime.now().millisecondsSinceEpoch);
+      await sendNotification(notification, request.receiverId);
       return documentReference.id;
       //
     } on FirebaseException catch (ex) {
       return null;
     }
   }
+
+  // Fetch List of requests
+  Stream<List<Request>> get requests {
+    try {
+      return FirebaseFirestore.instance
+          .collection("requests")
+          .doc(AuthBloc.uid)
+          .collection('game_requests')
+          .orderBy('date', descending: true)
+          .snapshots()
+          .map((snapshots) => snapshots.docs
+              .map((doc) => Request.fromMap(doc.data()))
+              .toList());
+    } on FirebaseException catch (e) {
+      return null;
+    }
+  }
+
   // Or do other work.
-Future<List<Post>> convertSnapshots(QuerySnapshot snapshots) async {
+  Future<List<Post>> convertSnapshots(QuerySnapshot snapshots) async {
     return snapshots.docs.map((doc) {
       return Post.fromMap(doc.data());
     }).toList();
+  }
+
+  Future<void> sendNotification(
+      FGNotification notification, String receiverId) async {
+    try {
+      var reference = await FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(receiverId)
+          .collection("notifs")
+          .add(notification.toMap());
+      reference.update({'notificationId': reference.id});
+    } on FirebaseException catch (e) {}
+  }
+
+  Stream<List<FGNotification>> get notifications {
+    return FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(AuthBloc.uid)
+        .collection("notifs")
+        .snapshots()
+        .map((snapshots) => snapshots.docs
+            .map((doc) => FGNotification.fromMap(doc.data()))
+            .toList());
+  }
+
+  Stream<Call> get call {
+    return FirebaseFirestore.instance
+        .collection("user_calls")
+        .doc(AuthBloc.uid)
+        .collection("calls")
+        .doc('call')
+        .snapshots()
+        .map((doc) => Call.fromMap(doc.data()));
+  }
+
+  Future<void> respondToGameRequest(bool accept, Request request) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('requests')
+          .doc(AuthBloc.uid)
+          .collection('game_requests')
+          .doc(request.requestId)
+          .delete();
+    } on FirebaseException catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> pushCall(Call call) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('user_calls')
+          .doc(call.recieverId)
+          .collection('calls')
+          .doc('call')
+          .set(call.toMap());
+    } on FirebaseException catch (e) {
+      print(e);
+    }
   }
 }

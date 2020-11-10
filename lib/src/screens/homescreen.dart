@@ -2,13 +2,18 @@ import 'package:badges/badges.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
+import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
+import 'package:friendly_gaming/src/model/notification.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
+import 'package:friendly_gaming/src/screens/contacts_screen.dart';
+import 'package:friendly_gaming/src/screens/incoming_call_screen.dart';
 import 'package:friendly_gaming/src/screens/new_challenge.dart';
+import 'package:friendly_gaming/src/screens/notification_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
 import 'package:friendly_gaming/src/screens/timeline_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -41,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     pageController = PageController(
       initialPage: activePage,
     );
+    context.bloc<DataBloc>().add(FetchNotificationEvent());
     super.initState();
   }
 
@@ -56,22 +62,27 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0.5,
         toolbarHeight: 90,
         leading: Container(),
-        backgroundColor: Colors.white,
-        centerTitle: true,
+        // backgroundColor: Colors.white,
+        // centerTitle: true,
         title: Row(
           children: [
             Container(
               padding: EdgeInsets.all(5),
               decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Theme.of(context)
+                      .scaffoldBackgroundColor
+                      .withOpacity(0.8),
                   borderRadius: BorderRadius.circular(8)),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text('Friendly',
-                      style: TextStyle(color: Colors.black, fontSize: 16)),
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.headline6.color,
+                          fontSize: 14)),
                   Text(
                     'Gaming',
-                    style: TextStyle(color: Colors.blueAccent, fontSize: 18),
+                    style: TextStyle(color: Colors.blueAccent, fontSize: 15),
                   ),
                 ],
               ),
@@ -81,7 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Text(
               '|',
-              style: TextStyle(color: Colors.black, fontSize: 18),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headline6.color,
+                  fontSize: 16),
             ),
             SizedBox(
               width: 5,
@@ -89,46 +102,95 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               title,
               overflow: TextOverflow.clip,
-              style: TextStyle(color: Colors.black, fontSize: 18),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headline6.color,
+                  fontSize: 18),
             ),
           ],
         ),
         actions: [
-          BlocBuilder<AuthBloc, AuthState>(
+          BlocBuilder<DataBloc, DataState>(
+            buildWhen: (previous, current) =>
+                current is NotificationsFetchedState,
             builder: (context, state) {
-              return  Badge(
-                position: BadgePosition.topEnd(top: 30, end: 12),
-                animationDuration: Duration(milliseconds: 300),
-                animationType: BadgeAnimationType.slide,
-                child: IconButton(icon: Icon(Icons.notifications,color:Colors.blueGrey), onPressed: () {}),
-              );
+              List<FGNotification> notifs = [];
+              if (state is NotificationsFetchedState) {
+                notifs = state.notifications
+                    .where((element) => !element.read)
+                    .toList();
+                print('***********Notiications************${notifs.length}');
+              }
+              return notifs.isEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.notifications, color: Colors.blueGrey),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: NotificationScreen()));
+                      })
+                  : Badge(
+                      position: BadgePosition.topEnd(top: 30, end: 12),
+                      animationDuration: Duration(milliseconds: 300),
+                      animationType: BadgeAnimationType.slide,
+                      child: IconButton(
+                          icon:
+                              Icon(Icons.notifications, color: Colors.blueGrey),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    type: PageTransitionType.rightToLeft,
+                                    child: NotificationScreen()));
+                          }),
+                    );
             },
           ),
         ],
       ),
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        children: pages,
-        controller: pageController,
+      body: BlocListener<DataBloc, DataState>(
+        listenWhen: (previous, current) => current is IncomingCallRecievedState,
+        listener: (context, state) {
+          if (state is IncomingCallRecievedState) {
+            if (state.call.isActive) {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: IncomingCallScreen()));
+            }
+          }
+        },
+        child: PageView(
+          physics: NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          children: pages,
+          controller: pageController,
+        ),
       ),
-      floatingActionButton: activePage == 0
+      floatingActionButton: activePage == 0 || activePage == 1
           ? FloatingActionButton(
               key: fabKey,
               tooltip: 'Add Post',
-              child: Icon(Icons.add),
+              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined),
               onPressed: () {
                 // scaffoldKey.currentState
                 // .showSnackBar(SnackBar(content: Text('heloo')));
-                _showModalBottomSheet(context);
+                if (activePage == 0) {
+                  _showModalBottomSheet(context);
+                } else {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => ContactsScreen()));
+                }
               })
           : SizedBox.shrink(),
       bottomNavigationBar: ConvexAppBar(
         // key: navKey,
         curve: Curves.easeInOut,
-        backgroundColor: Colors.white,
-        color: Colors.blue,
-        activeColor: Colors.blue,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        color: Theme.of(context).textTheme.headline6.color.withOpacity(0.5),
+        activeColor: Theme.of(context).accentColor,
         // height: 0,
         // cornerRadius: 16,
         items: [
@@ -153,12 +215,15 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: new Wrap(
           children: <Widget>[
             new ListTile(
                 leading: new Icon(Icons.score, color: Colors.blue),
                 title: new Text('Add New Scoreboard',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.headline6.color,
+                        fontWeight: FontWeight.bold)),
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
@@ -168,12 +233,16 @@ class _HomeScreenState extends State<HomeScreen> {
             new ListTile(
               leading: new Icon(Icons.gamepad, color: Colors.blue),
               title: new Text('New Game Challenge',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.headline6.color,
+                      fontWeight: FontWeight.bold)),
               onTap: () {
                 Navigator.of(context).pop();
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => NewChallenge()));
-                
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: NewChallenge()));
               },
             ),
           ],

@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/user.dart';
+import 'package:friendly_gaming/src/screens/notification_screen.dart';
+import 'package:friendly_gaming/src/screens/settings_screen.dart';
 import 'package:friendly_gaming/src/screens/statistics_screen.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -37,7 +40,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           margin: EdgeInsets.all(16.0),
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12.0)),
+              color: Theme.of(context).cardTheme.color,
+              borderRadius: BorderRadius.circular(12.0)),
           child: Column(
             children: [
               Container(
@@ -99,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ? Text(
                       '${user?.name ?? ''}',
                       style: TextStyle(
-                          color: Colors.blue,
+                          color: Theme.of(context).textTheme.headline6.color,
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     )
@@ -118,9 +122,10 @@ class _ProfileScreenState extends State<ProfileScreen>
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.grey[200],
+                  color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: ListTile(
+                  focusColor: Theme.of(context).canvasColor,
                   leading: Icon(
                     Icons.person,
                     color: Colors.blue,
@@ -128,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   title: Text(
                     'Edit Profile',
                     style: TextStyle(
-                        color: Colors.blue,
+                        color: Theme.of(context).textTheme.headline6.color.withOpacity(0.5),
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
@@ -145,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.grey[200],
+                  color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: ListTile(
                   leading: Icon(
@@ -155,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   title: Text(
                     'Statistics',
                     style: TextStyle(
-                        color: Colors.blue,
+                        color: Theme.of(context).textTheme.headline6.color.withOpacity(0.5),
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
@@ -173,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.grey[200],
+                  color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: ListTile(
                   leading: Icon(
@@ -183,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   title: Text(
                     'Settings',
                     style: TextStyle(
-                        color: Colors.blue,
+                        color: Theme.of(context).textTheme.headline6.color.withOpacity(0.5),
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
@@ -191,7 +196,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Icons.keyboard_arrow_right,
                     color: Colors.blue,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: AppSettingsScreen()));
+                  },
                 ),
               ),
               SizedBox(
@@ -200,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.grey[200],
+                  color: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 child: ListTile(
                   leading: Icon(
@@ -210,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   title: Text(
                     'Notifications',
                     style: TextStyle(
-                        color: Colors.blue,
+                        color: Theme.of(context).textTheme.headline6.color.withOpacity(0.5),
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
@@ -218,7 +225,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Icons.keyboard_arrow_right,
                     color: Colors.blue,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: NotificationScreen()));
+                  },
                 ),
               ),
               SizedBox(
@@ -227,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12.0),
-                    color: Colors.grey[200],
+                    color: Theme.of(context).scaffoldBackgroundColor,
                   ),
                   child: ListTile(
                     leading: Icon(
@@ -237,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     title: Text(
                       'Logout',
                       style: TextStyle(
-                          color: Colors.red,
+                          color: Theme.of(context).textTheme.headline6.color.withOpacity(0.5),
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),

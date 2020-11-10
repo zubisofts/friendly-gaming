@@ -10,7 +10,7 @@ class Request {
   String requestId;
   String senderId;
   String receiverId;
-  DateTime date;
+  int date;
   String requestType;
   String status;
 
@@ -46,7 +46,7 @@ class Request {
       'requestId': requestId,
       'senderId': senderId,
       'receiverId': receiverId,
-      'date': date?.millisecondsSinceEpoch,
+      'date': date,
       'requestType': requestType,
       'status':status,
     };
@@ -59,7 +59,7 @@ class Request {
       requestId: map['requestId'],
       senderId: map['senderId'],
       receiverId: map['receiverId'],
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      date: map['date'],
       requestType: map['requestType'],
       status: map['status'],
     );

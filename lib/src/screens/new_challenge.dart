@@ -26,11 +26,13 @@ class _NewChallengeState extends State<NewChallenge> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text('Select Opponent', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        title: Text('Select Opponent', style: TextStyle(
+            color: Theme.of(context).textTheme.headline6.color)),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios,
+              color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
@@ -40,9 +42,11 @@ class _NewChallengeState extends State<NewChallenge> {
             child: TextFormField(
               onChanged: (value) =>
                   context.bloc<DataBloc>().add(SearchUserEvent(query: value)),
+              style: TextStyle(color: Theme.of(context).textTheme.headline6.color),
               decoration: InputDecoration(
                   hintText: 'Search opponent',
-                  prefixIcon: Icon(Icons.search),
+                  hintStyle: TextStyle(color: Theme.of(context).textTheme.headline6.color.withOpacity(0.7)),
+                  prefixIcon: Icon(Icons.search,color: Theme.of(context).textTheme.headline6.color,),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.0))),
             ),
@@ -106,7 +110,8 @@ class _NewChallengeState extends State<NewChallenge> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: Colors.blue),
+                        border: Border.all(width: 4,
+                            color: Theme.of(context).scaffoldBackgroundColor),
                         shape: BoxShape.circle),
                     child: CircleAvatar(
                       radius: 40.0,
@@ -130,6 +135,7 @@ class _NewChallengeState extends State<NewChallenge> {
                       Text(
                         user.name,
                         style: TextStyle(
+                          color: Theme.of(context).textTheme.headline6.color,
                             fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                       SizedBox(
@@ -154,7 +160,9 @@ class _NewChallengeState extends State<NewChallenge> {
                           children: [
                             Text(
                               'Total games played:',
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                color: Theme.of(context).textTheme.headline6.color,
+                                  fontWeight: FontWeight.w500),
                             ),
                             Text(
                               '56',
@@ -174,7 +182,9 @@ class _NewChallengeState extends State<NewChallenge> {
                           children: [
                             Text(
                               'Games won:',
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                color: Theme.of(context).textTheme.headline6.color,
+                                  fontWeight: FontWeight.w500),
                             ),
                             Text(
                               '35',
@@ -194,7 +204,9 @@ class _NewChallengeState extends State<NewChallenge> {
                           children: [
                             Text(
                               'Games Lost:',
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  color: Theme.of(context).textTheme.headline6.color,
+                                  fontWeight: FontWeight.w500),
                             ),
                             Text(
                               '15',
@@ -214,7 +226,9 @@ class _NewChallengeState extends State<NewChallenge> {
                           children: [
                             Text(
                               'Games drawn:',
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  color: Theme.of(context).textTheme.headline6.color,
+                                  fontWeight: FontWeight.w500),
                             ),
                             Text(
                               '6',
@@ -230,6 +244,9 @@ class _NewChallengeState extends State<NewChallenge> {
                         height: 32,
                       ),
                       BlocBuilder<DataBloc, DataState>(
+                        buildWhen: (previous, current)=>
+                        current is SendingRequestState ||
+                        current is RequestSentState,
                         builder: (context, state) {
                           if (state is SendingRequestState) {
                             // print('********${user.id}*******');
@@ -264,7 +281,7 @@ class _NewChallengeState extends State<NewChallenge> {
           ],
         ),
         elevation: 8.0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32.0),
@@ -300,7 +317,7 @@ class SendButton extends StatelessWidget {
           padding: EdgeInsets.all(8.0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          color: isLoading || isSent ? Colors.grey : Colors.blue,
+          color: isLoading || isSent ? Colors.grey : Theme.of(context).accentColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
