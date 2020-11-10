@@ -24,7 +24,7 @@ class _TimelineScreenState extends State<TimelineScreen>
     context.bloc<DataBloc>().add(FetchPostEvent());
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        // color: Colors.grey[200],
       ),
       child: BlocConsumer<DataBloc, DataState>(
         buildWhen: (previous, current) => current is PostsFetchedState,

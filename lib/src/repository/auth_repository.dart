@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:friendly_gaming/src/model/user.dart' as UserModel;
 import 'package:friendly_gaming/src/repository/data_repository.dart';
@@ -49,6 +50,7 @@ class AuthenticationRepository {
   AuthenticationRepository({
     FirebaseAuth firebaseAuth,
     FirebaseFirestore firebaseFirestore,
+    FirebaseMessaging firebaseMessaging,
     GoogleSignIn googleSignIn,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
@@ -59,12 +61,14 @@ class AuthenticationRepository {
                 'email',
                 // 'https://www.googleapis.com/auth/contacts.readonly',
               ],
-            );
+            ),
+        _firebaseMessaging= FirebaseMessaging();
 
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firebaseFirestore;
   final GoogleSignIn _googleSignIn;
   final FacebookLogin _facebookLogin;
+  final FirebaseMessaging _firebaseMessaging;
 
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
@@ -269,6 +273,7 @@ class AuthenticationRepository {
           .doc(userData['id'])
           .set(userData);
 
+      await saveDeviceToken(userData['id']);
       return UserModel.User.fromJson(userData);
     } on FirebaseAuthException catch (e) {
       throw SignUpFailure(message: e.message);
@@ -296,6 +301,28 @@ class AuthenticationRepository {
       ]);
     } on Exception {
       throw LogOutFailure();
+    }
+  }
+
+
+  /// Get the token, save it to the database for current user
+  Future<void> saveDeviceToken(String uid) async {
+
+    // Get the token for this device
+    String fcmToken = await _firebaseMessaging.getToken();
+
+    // Save it to Firestore
+    if (fcmToken != null) {
+      await _firebaseFirestore
+          .collection('user_tokens')
+          .doc(uid)
+          .collection('tokens')
+          .add({
+        'token': fcmToken,
+        'createdAt': FieldValue.serverTimestamp(), // optional
+        'platform': Platform.operatingSystem // optional
+      });
+
     }
   }
 

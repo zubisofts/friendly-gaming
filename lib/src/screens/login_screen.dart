@@ -12,12 +12,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Stack(
-        children: [
-          Column(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
             children: [
               Container(
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor),
                   width: MediaQuery.of(context).size.width,
                   child: Image.asset('assets/images/gaming_img3.jpg',
                       fit: BoxFit.cover)),
@@ -32,7 +34,10 @@ class LoginScreen extends StatelessWidget {
                         Text(
                           'Email',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                              color:
+                                  Theme.of(context).textTheme.headline6.color,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           height: 8,
@@ -44,7 +49,10 @@ class LoginScreen extends StatelessWidget {
                         Text(
                           'Password',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                              color:
+                                  Theme.of(context).textTheme.headline6.color,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           height: 8,
@@ -85,8 +93,7 @@ class LoginScreen extends StatelessWidget {
                       height: 8,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         InkWell(
                           onTap: () => context
@@ -98,10 +105,8 @@ class LoginScreen extends StatelessWidget {
                             child: Image.asset('assets/icons/fb.png'),
                           ),
                         ),
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.white,
-                          child: Image.asset('assets/icons/twitter1.png'),
+                        SizedBox(
+                          width: 16.0,
                         ),
                         InkWell(
                           onTap: () => context
@@ -142,38 +147,39 @@ class LoginScreen extends StatelessWidget {
               )
             ],
           ),
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is AuthLoadingState) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  color: Colors.white70,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SpinKitWanderingCubes(
-                        color: Colors.blue,
-                        size: 70.0,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      Text(
-                        'Loading',
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                );
-              }
-              return SizedBox.shrink();
-            },
-          )
-        ],
-      ),
+        ),
+        BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthLoadingState) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.white70,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SpinKitDualRing(
+                      color: Colors.blue,
+                      size: 50.0,
+                      lineWidth: 3,
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Text(
+                      'Signing In',
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+              );
+            }
+            return SizedBox.shrink();
+          },
+        )
+      ],
     );
   }
 }
@@ -276,12 +282,13 @@ class LoginButton extends StatelessWidget {
             margin: EdgeInsets.only(top: 32),
             width: MediaQuery.of(context).size.width,
             child: FlatButton(
+              disabledColor: Colors.grey[300],
               padding: EdgeInsets.symmetric(vertical: 18),
               onPressed: emailRes && passwordRes
                   ? () => context
                       .bloc<AuthBloc>()
                       .add(LoginWithEmailAndPasswordEvent())
-                  : () {},
+                  : null,
               child: Text(
                 'LOGIN',
                 style: TextStyle(color: Colors.white),

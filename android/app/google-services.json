@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "339410179455",
-    "firebase_url": "https://friendly-gaming.firebaseio.com",
-    "project_id": "friendly-gaming",
-    "storage_bucket": "friendly-gaming.appspot.com"
+    "project_number": "794855571097",
+    "firebase_url": "https://friendly-gaming-9f586.firebaseio.com",
+    "project_id": "friendly-gaming-9f586",
+    "storage_bucket": "friendly-gaming-9f586.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:339410179455:android:e463db23a0ac673d7a364a",
+        "mobilesdk_app_id": "1:794855571097:android:eb2a5013962501f8798208",
         "android_client_info": {
           "package_name": "com.zubisofts.friendly_gaming"
         }
       },
       "oauth_client": [
         {
-          "client_id": "339410179455-8fq148mmau9aedfkua0r25tef7fo59t4.apps.googleusercontent.com",
+          "client_id": "794855571097-qscrcf582bsduj96p8e31dk0fd881cgr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zubisofts.friendly_gaming",
+            "certificate_hash": "04ef008d8d04846cc54a943cb4338bb967d565c5"
+          }
+        },
+        {
+          "client_id": "794855571097-5fso2uc13il7dmtugv3uuc6ltssvcgch.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyByu42BV4nMbdaIEVp17ID8PIXs6-esvyc"
+          "current_key": "AIzaSyC1UXIrBzZcXCqi2meyngQEp9wMdT47eLQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "339410179455-8fq148mmau9aedfkua0r25tef7fo59t4.apps.googleusercontent.com",
+              "client_id": "794855571097-5fso2uc13il7dmtugv3uuc6ltssvcgch.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -1,12 +1,18 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendly_gaming/src/blocs/app/app_bloc.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/repository/auth_repository.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
+import 'package:friendly_gaming/src/utils/app_theme.dart';
 import 'src/screens/splashscreen.dart';
 
 void main() async {
@@ -14,16 +20,48 @@ void main() async {
   EquatableConfig.stringify = kDebugMode;
   // Bloc.observer = SimpleBlocObserver();
   await Firebase.initializeApp();
-
-  // final FirebaseStorage storage = FirebaseStorage(
-  //     app: app, storageBucket: 'gs://flutter-firebase-plugins.appspot.com');
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  StreamSubscription iosSubscription;
+
   final AuthenticationRepository authenticationRepository =
       AuthenticationRepository();
+
   final DataRepository dataRepository = DataRepository();
+
+  @override
+  void initState() {
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+      },
+      // onBackgroundMessage: myBackgroundMessageHandler,
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+    );
+
+    if (Platform.isIOS) {
+            iosSubscription = _firebaseMessaging.onIosSettingsRegistered.listen((data) {
+                // save the token  OR subscribe to a topic here
+            });
+
+            _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings());
+        }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -34,18 +72,26 @@ class MyApp extends StatelessWidget {
                 )),
         BlocProvider<DataBloc>(
             create: (context) => DataBloc(dataRepository: dataRepository)),
+        BlocProvider<AppBloc>(create: (context) => AppBloc())
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Friendly Gaming',
-        theme: ThemeData(
-          // brightness: Brightness.dark,
-          primarySwatch: Colors.blueGrey,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        // home: SplashScreen(),
-        home: SplashScreen(),
-      ),
+      child: BlocBuilder<AppBloc, AppState>(
+          builder: (context, state) {
+        bool value = false;
+        if (state is GetThemeValueState) {
+          value = state.value;
+        }
+
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Friendly Gaming',
+          theme: AppTheme.lightTheme
+              .copyWith(visualDensity: VisualDensity.adaptivePlatformDensity),
+          darkTheme: AppTheme.darkTheme
+              .copyWith(visualDensity: VisualDensity.adaptivePlatformDensity),
+          themeMode: !value ? ThemeMode.light : ThemeMode.dark,
+          home: SplashScreen(),
+        );
+      }),
     );
   }
 }

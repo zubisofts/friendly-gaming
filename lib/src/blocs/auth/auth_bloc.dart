@@ -97,7 +97,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (event is AuthStateChangedEvent) {
       // var user =event.user?.id !=null ? await new DataRepository().user(event.user.id):null;
-      uid = event.user.id;
+      uid = event.user?.id;
       yield AuthStateChangedState(user: event.user);
     }
   }

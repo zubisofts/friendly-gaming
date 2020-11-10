@@ -52,9 +52,13 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    // implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.android.support:multidex:1.0.3'
 }
 
 flutter {
     source '../..'
 }
+
+apply plugin: 'com.google.gms.google-services'

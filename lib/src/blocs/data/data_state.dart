@@ -9,6 +9,10 @@ abstract class DataState extends Equatable {
 
 class DataInitial extends DataState {}
 
+class DataErrorState extends DataState {}
+
+class DataLoadingState extends DataState {}
+
 class UsersLoadingState extends DataState {}
 
 class UserDetailsLoadingState extends DataState {}
@@ -49,4 +53,49 @@ class PostsFetchedState extends DataState {
 
   @override
   List<Object> get props => [posts];
+}
+
+class SendingRequestState extends DataState{
+   @override
+  List<Object> get props => [];
+}
+
+class RequestSentState extends DataState {
+  final String requestId;
+  RequestSentState({this.requestId});
+  @override
+  List<Object> get props => [requestId];
+}
+
+class RequestError extends DataState {
+  final String error;
+  RequestError({this.error});
+  @override
+  List<Object> get props => [error];
+}
+
+class RequestsFetchedState extends DataState{
+  final List<Request> requests;
+  RequestsFetchedState({this.requests});
+
+  @override
+  List<Object> get props => [requests];
+}
+
+class RefreshState extends DataState{
+  @override
+  List<Object> get props => [];
+}
+class NotificationsFetchedState extends DataState{
+  final List<FGNotification> notifications;
+  NotificationsFetchedState({@required this.notifications});
+  @override
+  List<Object> get props => [notifications];
+}
+
+class IncomingCallRecievedState extends DataState{
+  final Call call;
+  IncomingCallRecievedState({@required this.call});
+  @override
+  List<Object> get props => [call];
 }

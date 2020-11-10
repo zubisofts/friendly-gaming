@@ -22,13 +22,25 @@ class TimelineCard extends StatefulWidget {
 }
 
 class _TimelineCardState extends State<TimelineCard> {
+  Stream firstUserStream;
+  Stream secondUserStream;
+
+  @override
+  void initState() {
+    firstUserStream =
+        DataRepository().userDetails(widget.timelineData.firstPlayerId);
+    secondUserStream =
+        DataRepository().userDetails(widget.timelineData.secondPlayerId);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -49,8 +61,7 @@ class _TimelineCardState extends State<TimelineCard> {
                 child: Column(
                   children: [
                     StreamBuilder<User>(
-                      stream: DataRepository()
-                          .userDetails(widget.timelineData.firstPlayerId),
+                      stream: firstUserStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           User user = snapshot.data;
@@ -66,7 +77,10 @@ class _TimelineCardState extends State<TimelineCard> {
                               ),
                               Text(
                                 user.name,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    .copyWith(fontWeight: FontWeight.bold,fontSize: 14),
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
@@ -113,8 +127,7 @@ class _TimelineCardState extends State<TimelineCard> {
                 child: Column(
                   children: [
                     StreamBuilder<User>(
-                      stream: DataRepository()
-                          .userDetails(widget.timelineData.secondPlayerId),
+                      stream: secondUserStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           User user = snapshot.data;
@@ -130,7 +143,10 @@ class _TimelineCardState extends State<TimelineCard> {
                               ),
                               Text(
                                 user.name,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    .copyWith(fontWeight: FontWeight.bold,fontSize: 14),
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
@@ -186,7 +202,7 @@ class _TimelineCardState extends State<TimelineCard> {
                                     widget.timelineData
                                         .scores['secondPlayerScore'])
                             ? Colors.green
-                            : Colors.black,
+                            : Theme.of(context).textTheme.headline6.color,
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
                     textAlign: TextAlign.center,
@@ -195,7 +211,9 @@ class _TimelineCardState extends State<TimelineCard> {
                   flex: 1,
                   child: Text(
                     'Score',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headline6.color,
+                        fontWeight: FontWeight.w800, fontSize: 16),
                     textAlign: TextAlign.center,
                   )),
               Expanded(
@@ -203,15 +221,16 @@ class _TimelineCardState extends State<TimelineCard> {
                   child: Text(
                     '${widget.timelineData.scores['secondPlayerScore']}',
                     style: TextStyle(
-                        color: (widget.timelineData.scores['secondPlayerScore'] >
+                        color:
+                            (widget.timelineData.scores['secondPlayerScore'] >
+                                        widget.timelineData
+                                            .scores['firstPlayerScore'] ||
                                     widget.timelineData
-                                        .scores['firstPlayerScore'] ||
-                                widget.timelineData
-                                        .scores['firstPlayerScore'] ==
-                                    widget.timelineData
-                                        .scores['secondPlayerScore'])
-                            ? Colors.green
-                            : Colors.black,
+                                            .scores['firstPlayerScore'] ==
+                                        widget.timelineData
+                                            .scores['secondPlayerScore'])
+                                ? Colors.green
+                                : Theme.of(context).textTheme.headline6.color,
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
                     textAlign: TextAlign.center,
@@ -237,7 +256,10 @@ class _TimelineCardState extends State<TimelineCard> {
                   SizedBox(
                     width: 5,
                   ),
-                  Text('200'),
+                  Text('200',style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).textTheme.headline6.color,
+                  ),),
                   SizedBox(
                     width: 16,
                   ),
@@ -245,7 +267,7 @@ class _TimelineCardState extends State<TimelineCard> {
                   SizedBox(
                     width: 5,
                   ),
-                  Text('50'),
+                  Text('50', style: TextStyle(fontSize:14,color: Theme.of(context).textTheme.headline6.color,),),
                 ],
               ),
               IconButton(
