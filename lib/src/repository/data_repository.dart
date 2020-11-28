@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/model/call.dart';
+import 'package:friendly_gaming/src/model/chat.dart';
+import 'package:friendly_gaming/src/model/message.dart';
 import 'package:friendly_gaming/src/model/notification.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/request.dart';
@@ -281,5 +284,106 @@ class DataRepository {
     } on FirebaseException catch (e) {
       print(e);
     }
+  }
+
+  Future<void> endCall(Call call) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('user_calls')
+          .doc(call.recieverId)
+          .collection('calls')
+          .doc('call')
+          .update({"isActive": false, "incoming": false});
+    } on FirebaseException catch (e) {
+      print(e);
+    }
+  }
+
+  Future<String> sendMessage(Message message, String receiverId) async {
+    try {
+      var key = AuthBloc.uid.hashCode + receiverId.hashCode;
+      DocumentReference docRef = await FirebaseFirestore.instance
+          .collection('messages')
+          .doc('msg_$key')
+          .collection('messages')
+          .add(message.toMap());
+      await docRef.update({'id': docRef.id});
+      await addMessageToChats(receiverId, message);
+      return docRef.id;
+    } on FirebaseException catch (e) {
+      print('SendMessageError:$e');
+      return null;
+    }
+  }
+
+  Future<void> addMessageToChats(String recieverId, Message msg) async {
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.set(
+          FirebaseFirestore.instance
+              .collection('user_chats')
+              .doc(AuthBloc.uid)
+              .collection('data')
+              .doc('${AuthBloc.uid}_$recieverId'),
+          Chat(
+            id: '',
+            timestamp: msg.timestamp,
+            lastMessage: msg,
+          ).toMap());
+
+      batch.update(
+          FirebaseFirestore.instance
+              .collection('user_chats')
+              .doc(AuthBloc.uid)
+              .collection('data')
+              .doc('${AuthBloc.uid}_$recieverId'),
+          {'id': recieverId});
+
+      batch.set(
+          FirebaseFirestore.instance
+              .collection('user_chats')
+              .doc(recieverId)
+              .collection('data')
+              .doc('${recieverId}_${AuthBloc.uid}'),
+          Chat(
+            id: '',
+            timestamp: msg.timestamp,
+            lastMessage: msg,
+          ).toMap());
+
+      batch.update(
+          FirebaseFirestore.instance
+              .collection('user_chats')
+              .doc(recieverId)
+              .collection('data')
+              .doc('${recieverId}_${AuthBloc.uid}'),
+          {'id': AuthBloc.uid});
+
+      batch.commit();
+    } on FirebaseException catch (e) {
+      print('Error:$e');
+    }
+  }
+
+  Stream<List<Chat>> get chats {
+    return FirebaseFirestore.instance
+        .collection('user_chats')
+        .doc(AuthBloc.uid)
+        .collection('data')
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((chat) => Chat.fromMap(chat.data())).toList());
+  }
+
+  Stream<List<Message>> messages(String uid) {
+    var key = AuthBloc.uid.hashCode + uid.hashCode;
+    return FirebaseFirestore.instance
+        .collection('messages')
+        .doc('msg_$key')
+        .collection('messages')
+        .orderBy('timestamp')
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((chat) => Message.fromMap(chat.data())).toList());
   }
 }

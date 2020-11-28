@@ -81,14 +81,16 @@ class SendRequestEvent extends DataEvent {
   List<Object> get props => [requestType, receiverId];
 }
 
-class FetchRequestsEvent extends DataEvent{
+class FetchRequestsEvent extends DataEvent {
   @override
   List<Object> get props => [];
 }
 
-class RequestsFetchedEvent extends DataEvent{
+class RequestsFetchedEvent extends DataEvent {
   final List<Request> requests;
+
   RequestsFetchedEvent({this.requests});
+
   @override
   List<Object> get props => [requests];
 }
@@ -96,10 +98,11 @@ class RequestsFetchedEvent extends DataEvent{
 class RequestResponseEvent extends DataEvent {
   final bool accept;
   final Request request;
-  RequestResponseEvent({this.accept,this.request});
+
+  RequestResponseEvent({this.accept, this.request});
 
   @override
-  List<Object> get props => [accept,request];
+  List<Object> get props => [accept, request];
 }
 
 class RefreshEvent extends DataEvent {}
@@ -116,7 +119,6 @@ class NotificationsFetchedEvent extends DataEvent {
 }
 
 class IncomingCallEvent extends DataEvent {
-
   @override
   List<Object> get props => [];
 }
@@ -128,4 +130,52 @@ class SendIncomingCallEvent extends DataEvent {
 
   @override
   List<Object> get props => [call];
+}
+
+class EndCallEvent extends DataEvent {
+  final Call call;
+
+  EndCallEvent({this.call});
+
+  @override
+  List<Object> get props => [call];
+}
+
+class FetchChatsEvent extends DataEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class ChatsFetchedEvent extends DataEvent {
+  final List<Chat> chats;
+
+  ChatsFetchedEvent({@required this.chats});
+
+  @override
+  List<Object> get props => [chats];
+}
+
+class SendMessageEvent extends DataEvent {
+  final Message message;
+  final String receiverId;
+  SendMessageEvent({@required this.message, @required this.receiverId});
+
+  @override
+  List<Object> get props => [message, receiverId];
+}
+
+class FetchMessagesEvent extends DataEvent {
+  // Other user ID
+  final String receiverId;
+  FetchMessagesEvent({@required this.receiverId});
+
+  @override
+  List<Object> get props => [receiverId];
+}
+
+class MessagesFetchedEvent extends DataEvent {
+  final List<Message> messages;
+  MessagesFetchedEvent({@required this.messages});
+  @override
+  List<Object> get props => [props];
 }

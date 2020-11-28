@@ -47,16 +47,17 @@ class _GameRequestsScreenState extends State<GameRequestsScreen> {
                       itemCount: requests.length,
                       itemBuilder: (context, index) {
                         var request = requests[index];
-                        if (index==requests.length-1) {
+                        if (index == requests.length - 1) {
                           print('Last');
-                          Future.delayed(Duration(milliseconds: 1000)).then((value){
+                          Future.delayed(Duration(milliseconds: 1000))
+                              .then((value) {
                             print('Scrolled');
-                          if (request.requestId ==
-                          widget.notification.actionIntentId) {
+                            if (request.requestId ==
+                                widget.notification.actionIntentId) {
                               scrollController.animateTo(5.0,
-                              duration: Duration(milliseconds: 1000),
-                              curve: Curves.decelerate);
-                        }
+                                  duration: Duration(milliseconds: 1000),
+                                  curve: Curves.decelerate);
+                            }
                           });
                         }
                         return RequestItemWidget(
@@ -72,14 +73,14 @@ class _GameRequestsScreenState extends State<GameRequestsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SvgPicture.asset(
-                              'assets/icons/empty.svg',
+                              'assets/icons/empty_request.svg',
                               width: MediaQuery.of(context).size.width * 0.5,
                             ),
                             SizedBox(
                               height: 16.0,
                             ),
                             Text(
-                              "You don't have any notifications",
+                              "You don't have any game challenge request at the moment.",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: Theme.of(context)

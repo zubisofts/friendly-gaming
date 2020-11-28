@@ -6,7 +6,7 @@ class AppTheme {
 
   static final ThemeData lightTheme = ThemeData(
     scaffoldBackgroundColor: Colors.grey[100],
-    fontFamily: "Poppins-Light",
+    // fontFamily: "Poppins-Light",
     appBarTheme: AppBarTheme(
       color: Colors.white,
       textTheme: TextTheme(caption: TextStyle(color: Colors.black)),
@@ -19,6 +19,7 @@ class AppTheme {
       onPrimary: Colors.white,
       primaryVariant: Colors.white38,
       secondary: Colors.blue,
+      onSecondary: Colors.blueGrey,
     ),
     cardTheme: CardTheme(
       color: Colors.white,
@@ -41,7 +42,7 @@ class AppTheme {
   static final ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: Color(0xFF141d26),
     cardColor: Color(0xFF243447),
-    fontFamily: "Poppins-Light",
+    // fontFamily: "Poppins-Light",
     appBarTheme: AppBarTheme(
       color: Color(0xFF243447),
       iconTheme: IconThemeData(
@@ -53,6 +54,7 @@ class AppTheme {
       onPrimary: Color(0xFF141d26),
       primaryVariant: Color(0xFF141d26),
       secondary: Colors.blue,
+      onSecondary: Colors.blueGrey,
     ),
     cardTheme: CardTheme(
       color: Color(0xFF243447).withOpacity(0.5),
