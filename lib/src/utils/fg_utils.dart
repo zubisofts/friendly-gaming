@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class FGUtils{
-
-  static String displayTimeAgoFromTimestamp(int millisecondsSinceEpoch, {bool numericDates = true}) {
+class FGUtils {
+  static String displayTimeAgoFromTimestamp(int millisecondsSinceEpoch,
+      {bool numericDates = true}) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
     final date2 = DateTime.now();
     final difference = date2.difference(date);
@@ -36,5 +37,11 @@ class FGUtils{
     } else {
       return 'Just now';
     }
+  }
+
+  static String getTimeFromTimestamp(int millisecondsSinceEpoch) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+    String time = DateFormat.jm().format(date);
+    return time;
   }
 }

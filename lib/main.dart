@@ -23,6 +23,22 @@ void main() async {
   runApp(MyApp());
 }
 
+Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
+  if (message.containsKey('data')) {
+    // Handle data message
+    final dynamic data = message['data'];
+    print('Data: $data');
+  }
+
+  if (message.containsKey('notification')) {
+    // Handle notification message
+    final dynamic notification = message['notification'];
+    print('Data: $notification');
+  }
+
+  // Or do other work.
+}
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -43,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
       },
-      // onBackgroundMessage: myBackgroundMessageHandler,
+      onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
       },
@@ -53,13 +69,21 @@ class _MyAppState extends State<MyApp> {
     );
 
     if (Platform.isIOS) {
-            iosSubscription = _firebaseMessaging.onIosSettingsRegistered.listen((data) {
-                // save the token  OR subscribe to a topic here
-            });
+      iosSubscription =
+          _firebaseMessaging.onIosSettingsRegistered.listen((data) {
+        // save the token  OR subscribe to a topic here
+      });
 
-            _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings());
-        }
+      _firebaseMessaging
+          .requestNotificationPermissions(IosNotificationSettings());
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    iosSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -74,8 +98,7 @@ class _MyAppState extends State<MyApp> {
             create: (context) => DataBloc(dataRepository: dataRepository)),
         BlocProvider<AppBloc>(create: (context) => AppBloc())
       ],
-      child: BlocBuilder<AppBloc, AppState>(
-          builder: (context, state) {
+      child: BlocBuilder<AppBloc, AppState>(builder: (context, state) {
         bool value = false;
         if (state is GetThemeValueState) {
           value = state.value;

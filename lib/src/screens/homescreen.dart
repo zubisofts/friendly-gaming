@@ -150,15 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: BlocListener<DataBloc, DataState>(
-        listenWhen: (previous, current) => current is IncomingCallRecievedState,
+        listenWhen: (previous, current) => current is IncomingCallReceivedState,
         listener: (context, state) {
-          if (state is IncomingCallRecievedState) {
-            if (state.call.isActive) {
+          if (state is IncomingCallReceivedState) {
+            if (state.call.incoming && !state.call.isActive) {
               Navigator.push(
                   context,
                   PageTransition(
                       type: PageTransitionType.rightToLeft,
-                      child: IncomingCallScreen()));
+                      child: IncomingCallScreen(call: state.call)));
             }
           }
         },

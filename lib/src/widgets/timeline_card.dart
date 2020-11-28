@@ -7,7 +7,6 @@ import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/timeline_data.dart';
 import 'package:friendly_gaming/src/model/user.dart';
-import 'package:friendly_gaming/src/repository/auth_repository.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'package:friendly_gaming/src/widgets/win_switch.dart';
 
@@ -80,7 +79,9 @@ class _TimelineCardState extends State<TimelineCard> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
-                                    .copyWith(fontWeight: FontWeight.bold,fontSize: 14),
+                                    .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
@@ -146,7 +147,9 @@ class _TimelineCardState extends State<TimelineCard> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
-                                    .copyWith(fontWeight: FontWeight.bold,fontSize: 14),
+                                    .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
@@ -212,8 +215,9 @@ class _TimelineCardState extends State<TimelineCard> {
                   child: Text(
                     'Score',
                     style: TextStyle(
-                      color: Theme.of(context).textTheme.headline6.color,
-                        fontWeight: FontWeight.w800, fontSize: 16),
+                        color: Theme.of(context).textTheme.headline6.color,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16),
                     textAlign: TextAlign.center,
                   )),
               Expanded(
@@ -256,10 +260,13 @@ class _TimelineCardState extends State<TimelineCard> {
                   SizedBox(
                     width: 5,
                   ),
-                  Text('200',style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).textTheme.headline6.color,
-                  ),),
+                  Text(
+                    '200',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.headline6.color,
+                    ),
+                  ),
                   SizedBox(
                     width: 16,
                   ),
@@ -267,7 +274,13 @@ class _TimelineCardState extends State<TimelineCard> {
                   SizedBox(
                     width: 5,
                   ),
-                  Text('50', style: TextStyle(fontSize:14,color: Theme.of(context).textTheme.headline6.color,),),
+                  Text(
+                    '50',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.headline6.color,
+                    ),
+                  ),
                 ],
               ),
               IconButton(

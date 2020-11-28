@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
+import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
+import 'package:friendly_gaming/src/model/message.dart';
 
 class ChatInput extends StatefulWidget {
+  final String receiverId;
+
+  ChatInput({this.receiverId});
+
   @override
   _ChatInputState createState() => _ChatInputState();
 }
 
 class _ChatInputState extends State<ChatInput> {
-  final TextEditingController textEditingController =
-      new TextEditingController();
+  final TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +24,10 @@ class _ChatInputState extends State<ChatInput> {
           Material(
             child: new Container(
               margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle
-              ),
+              decoration: BoxDecoration(shape: BoxShape.circle),
               child: new IconButton(
                 onPressed: () {},
-                icon: new Icon(Icons.add_a_photo),
+                icon: new Icon(Icons.emoji_emotions),
                 color: Colors.blue,
               ),
             ),
@@ -32,9 +37,10 @@ class _ChatInputState extends State<ChatInput> {
           // Text input
           Flexible(
             child: Container(
-              child: TextField(
-                style: TextStyle(color: Colors.grey, fontSize: 15.0),
+              child: TextFormField(
+                style: TextStyle(color: Colors.black, fontSize: 15.0),
                 controller: textEditingController,
+                maxLines: 3,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type a message',
                   hintStyle: TextStyle(color: Colors.grey),
@@ -42,14 +48,38 @@ class _ChatInputState extends State<ChatInput> {
               ),
             ),
           ),
+          Material(
+            child: new Container(
+              margin: new EdgeInsets.symmetric(horizontal: 1.0),
+              decoration: BoxDecoration(shape: BoxShape.circle),
+              child: new IconButton(
+                onPressed: () {},
+                icon: new Icon(Icons.add_a_photo),
+                color: Colors.blue,
+              ),
+            ),
+            color: Colors.white,
+          ),
 
           // Send Message Button
           Material(
             child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0),
+              margin: new EdgeInsets.symmetric(horizontal: 4.0),
               child: new IconButton(
                 icon: new Icon(Icons.send),
-                onPressed: () => {},
+                onPressed: () {
+                  Message message = Message(
+                      id: '',
+                      senderId: AuthBloc.uid,
+                      message: '${textEditingController.text}',
+                      mediaType: 'Text',
+                      timestamp: DateTime.now().millisecondsSinceEpoch);
+
+                  BlocProvider.of<DataBloc>(context).add(SendMessageEvent(
+                      message: message, receiverId: widget.receiverId));
+
+                  textEditingController.clear();
+                },
                 color: Colors.blue,
               ),
             ),

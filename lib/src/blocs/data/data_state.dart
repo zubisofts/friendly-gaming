@@ -55,8 +55,8 @@ class PostsFetchedState extends DataState {
   List<Object> get props => [posts];
 }
 
-class SendingRequestState extends DataState{
-   @override
+class SendingRequestState extends DataState {
+  @override
   List<Object> get props => [];
 }
 
@@ -74,7 +74,7 @@ class RequestError extends DataState {
   List<Object> get props => [error];
 }
 
-class RequestsFetchedState extends DataState{
+class RequestsFetchedState extends DataState {
   final List<Request> requests;
   RequestsFetchedState({this.requests});
 
@@ -82,20 +82,47 @@ class RequestsFetchedState extends DataState{
   List<Object> get props => [requests];
 }
 
-class RefreshState extends DataState{
+class RefreshState extends DataState {
   @override
   List<Object> get props => [];
 }
-class NotificationsFetchedState extends DataState{
+
+class NotificationsFetchedState extends DataState {
   final List<FGNotification> notifications;
   NotificationsFetchedState({@required this.notifications});
   @override
   List<Object> get props => [notifications];
 }
 
-class IncomingCallRecievedState extends DataState{
+class IncomingCallReceivedState extends DataState {
   final Call call;
-  IncomingCallRecievedState({@required this.call});
+  IncomingCallReceivedState({@required this.call});
   @override
   List<Object> get props => [call];
+}
+
+class ChatsFetchedState extends DataState {
+  final List<Chat> chats;
+
+  ChatsFetchedState({@required this.chats});
+
+  @override
+  List<Object> get props => [chats];
+}
+
+class MessageSendErrorState extends DataState {}
+
+class MessageSentState extends DataState {
+  final String messageId;
+  MessageSentState({@required this.messageId});
+
+  @override
+  List<Object> get props => [messageId];
+}
+
+class MessagesFetchedState extends DataState {
+  final List<Message> messages;
+  MessagesFetchedState({@required this.messages});
+  @override
+  List<Object> get props => [messages];
 }
