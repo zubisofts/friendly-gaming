@@ -3,4 +3,5 @@
 <string name="app_name">Friendly Gaming</string>
     <string name="facebook_app_id">4417375491669445</string>
     <string name="fb_login_protocol_scheme">fb4417375491669445</string>
+    <string name="notification_channel_id">com.zubisoft.friendly_gaming</string>
 </resources>

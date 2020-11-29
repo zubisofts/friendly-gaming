@@ -10,7 +10,7 @@
 			"name": "tecno",
 			"request": "launch",
 			"type": "dart",
-			"deviceId": "04605339A6002569"
+			"deviceId": "192.168.43.117:5555"
 		},
 		{
 			"name": "infinix",
