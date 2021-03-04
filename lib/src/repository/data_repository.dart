@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/model/call.dart';
 import 'package:friendly_gaming/src/model/chat.dart';
@@ -126,43 +125,29 @@ class DataRepository {
     }
   }
 
-  Future<String> savePost(Post post) async {
+  Future<String> savePost(Post post, Request request) async {
     Map<String, dynamic> update = {};
     try {
       var documentReference = await FirebaseFirestore.instance
           .collection("posts")
           .add(post.toMap());
       update['id'] = documentReference.id;
-      documentReference.update(update);
-
-      String s1 = post.images[0] != null
-          ? await DataRepository().savePostImage(
-              documentReference.id, 'image_1', File(post.images[0]))
-          : '';
-      String s2 = post.images[1] != null
-          ? await DataRepository().savePostImage(
-              documentReference.id, 'image_2', File(post.images[1]))
-          : '';
-      String s3 = post.images[2] != null
-          ? await DataRepository().savePostImage(
-              documentReference.id, 'image_3', File(post.images[2]))
-          : '';
-
-      List<String> images = [s1, s2, s3];
-      update['images'] = images;
-
-      documentReference.update(update);
+      request.gameId = documentReference.id;
+      documentReference.update(update).then((value) => {sendRequest(request)});
 
       return documentReference.id;
     } on FirebaseException catch (e) {
       print(e.message);
     }
+
+    return null;
   }
 
   Stream<List<Post>> get posts {
     try {
       return FirebaseFirestore.instance
           .collection("posts")
+          // .where('status', isEqualTo: 'completed')
           .orderBy('date', descending: true)
           .snapshots()
           .asyncMap((snapshots) async {
@@ -172,6 +157,46 @@ class DataRepository {
     } on FirebaseException catch (ex) {
       print(ex.message);
     }
+
+    return null;
+  }
+
+  Future<bool> editPost(Map<String, dynamic> data, String postId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(postId)
+          .update(data);
+      return true;
+    } on FirebaseException catch (e) {
+      print('Error updating scores:${e.message}');
+    }
+    return false;
+  }
+
+  Stream<List<Post>> get fetchMyActiveGames {
+    try {
+      return FirebaseFirestore.instance
+          .collection("posts")
+          .orderBy('date', descending: true)
+          .snapshots()
+          .asyncMap((snapshots) async {
+        return snapshots.docs
+            .map((doc) {
+              return Post.fromMap(doc.data());
+            })
+            .where((post) =>
+                (post.firstPlayerId == AuthBloc.uid ||
+                    post.secondPlayerId == AuthBloc.uid) &&
+                post.status == 'active')
+            .toList();
+      });
+      //
+    } on FirebaseException catch (ex) {
+      print(ex.message);
+    }
+
+    return null;
   }
 
   // Requests
@@ -244,6 +269,7 @@ class DataRepository {
         .collection("notifications")
         .doc(AuthBloc.uid)
         .collection("notifs")
+        .orderBy('time', descending: true)
         .snapshots()
         .map((snapshots) => snapshots.docs
             .map((doc) => FGNotification.fromMap(doc.data()))
@@ -262,14 +288,28 @@ class DataRepository {
 
   Future<void> respondToGameRequest(bool accept, Request request) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('requests')
-          .doc(AuthBloc.uid)
-          .collection('game_requests')
-          .doc(request.requestId)
-          .delete();
+      if (accept) {
+        FirebaseFirestore.instance
+            .collection('posts')
+            .doc(request.gameId)
+            .update({'status': 'active'}).then((value) => {
+                  FirebaseFirestore.instance
+                      .collection('requests')
+                      .doc(AuthBloc.uid)
+                      .collection('game_requests')
+                      .doc(request.requestId)
+                      .delete()
+                });
+      } else {
+        FirebaseFirestore.instance
+            .collection('requests')
+            .doc(AuthBloc.uid)
+            .collection('game_requests')
+            .doc(request.requestId)
+            .delete();
+      }
     } on FirebaseException catch (e) {
-      print(e);
+      print('Error accepting request$e');
     }
   }
 
@@ -385,5 +425,14 @@ class DataRepository {
         .snapshots()
         .map((snapshot) =>
             snapshot.docs.map((chat) => Message.fromMap(chat.data())).toList());
+  }
+
+  Future<void> deleteNotification(String notificationId, String uid) async {
+    FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(uid)
+        .collection("notifs")
+        .doc(notificationId)
+        .delete();
   }
 }

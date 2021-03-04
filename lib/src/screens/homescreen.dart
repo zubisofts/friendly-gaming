@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     pageController = PageController(
       initialPage: activePage,
     );
-    context.bloc<DataBloc>().add(FetchNotificationEvent());
+    context.read<DataBloc>().add(FetchNotificationEvent());
     super.initState();
   }
 
@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ? FloatingActionButton(
               key: fabKey,
               tooltip: 'Add Post',
-              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined),
+              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined, color:Colors.white),
               onPressed: () {
                 // scaffoldKey.currentState
                 // .showSnackBar(SnackBar(content: Text('heloo')));
@@ -227,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => AddPostScreen(),
+                    builder: (context) => AddPostScreen(widget.user),
                   ));
                 }),
             new ListTile(

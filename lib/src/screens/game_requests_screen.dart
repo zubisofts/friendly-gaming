@@ -49,20 +49,20 @@ class _GameRequestsScreenState extends State<GameRequestsScreen> {
                         var request = requests[index];
                         if (index == requests.length - 1) {
                           print('Last');
-                          Future.delayed(Duration(milliseconds: 1000))
-                              .then((value) {
-                            print('Scrolled');
-                            if (request.requestId ==
-                                widget.notification.actionIntentId) {
-                              scrollController.animateTo(5.0,
-                                  duration: Duration(milliseconds: 1000),
-                                  curve: Curves.decelerate);
-                            }
-                          });
+                          // Future.delayed(Duration(milliseconds: 1000))
+                          //     .then((value) {
+                          //   print('Scrolled');
+                          //   if (request.requestId ==
+                          //       widget.notification?.actionIntentId) {
+                          //     scrollController.animateTo(5.0,
+                          //         duration: Duration(milliseconds: 1000),
+                          //         curve: Curves.decelerate);
+                          //   }
+                          // });
                         }
                         return RequestItemWidget(
                             request: request,
-                            highlight: widget.notification.actionIntentId ==
+                            highlight: widget.notification?.actionIntentId ==
                                 request.requestId);
                       },
                     )

@@ -11,7 +11,7 @@ class RequestItemWidget extends StatefulWidget {
   final Request request;
   final bool highlight;
 
-  const RequestItemWidget({this.request,this.highlight});
+  const RequestItemWidget({this.request, this.highlight});
 
   @override
   _RequestItemWidgetState createState() => _RequestItemWidgetState();
@@ -31,19 +31,20 @@ class _RequestItemWidgetState extends State<RequestItemWidget> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       decoration: BoxDecoration(
-          color: widget.highlight ? Colors.deepOrangeAccent.withOpacity(0.3):Theme.of(context).cardTheme.color),
+          color: widget.highlight
+              ? Colors.deepOrangeAccent.withOpacity(0.3)
+              : Theme.of(context).cardTheme.color),
       child: ListTile(
         onTap: null,
         contentPadding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
         leading: StreamBuilder<User>(
             stream: DataRepository().userDetails(widget.request.senderId),
             builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-              if(snapshot.hasData){
+              if (snapshot.hasData) {
                 return CircleAvatar(
                   radius: 24.0,
-                  backgroundImage: CachedNetworkImageProvider(
-                    snapshot.data.photo
-                  ),
+                  backgroundImage:
+                      CachedNetworkImageProvider(snapshot.data.photo),
                 );
               }
               return CircleAvatar(
@@ -100,7 +101,8 @@ class _RequestItemWidgetState extends State<RequestItemWidget> {
               FlatButton(
                   color: Theme.of(context).accentColor,
                   onPressed: () {
-                    BlocProvider.of<DataBloc>(context).add(RequestResponseEvent(accept:true,request: widget.request));
+                    BlocProvider.of<DataBloc>(context).add(RequestResponseEvent(
+                        accept: true, request: widget.request));
                   },
                   child: Text(
                     'Accept',
@@ -110,7 +112,8 @@ class _RequestItemWidgetState extends State<RequestItemWidget> {
               FlatButton(
                   color: Colors.deepOrangeAccent,
                   onPressed: () {
-                    BlocProvider.of<DataBloc>(context).add(RequestResponseEvent(accept:false,request: widget.request));
+                    BlocProvider.of<DataBloc>(context).add(RequestResponseEvent(
+                        accept: false, request: widget.request));
                   },
                   child: Text(
                     'Decline',

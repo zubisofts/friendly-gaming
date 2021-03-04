@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class ScoreSelector extends StatefulWidget {
   final Function(int) onSelect;
+  final initialValue;
 
-  ScoreSelector({this.onSelect});
+  ScoreSelector({this.onSelect, this.initialValue});
 
   @override
   _ScoreSelectorState createState() => _ScoreSelectorState();
@@ -15,7 +16,7 @@ class _ScoreSelectorState extends State<ScoreSelector> {
 
   @override
   void initState() {
-    number = 0;
+    number = widget.initialValue;
     textEditingController = TextEditingController(text: '$number');
     textEditingController.addListener(() {
       widget.onSelect(int.parse(textEditingController.text));

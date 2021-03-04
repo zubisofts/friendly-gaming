@@ -31,8 +31,8 @@ class LogInWithGoogleFailure implements Exception {
   String message;
 
   LogInWithGoogleFailure({this.message});
-
 }
+
 class LogInWithFacebookFailure implements Exception {
   String message;
 
@@ -62,7 +62,7 @@ class AuthenticationRepository {
                 // 'https://www.googleapis.com/auth/contacts.readonly',
               ],
             ),
-        _firebaseMessaging= FirebaseMessaging();
+        _firebaseMessaging = FirebaseMessaging();
 
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firebaseFirestore;
@@ -96,23 +96,32 @@ class AuthenticationRepository {
         password: password,
       );
       var user = userCredential.user.toUser;
-      String url='';
-      Map<String, dynamic> userData=user.toJson();
-      userData['name']=name;
-      if(photo != null){
+      String url = '';
+      Map<String, dynamic> userData = user.toJson();
+      userData['name'] = name;
+      if (photo != null) {
         var exists = await photo.exists();
-        if(exists){
-          url=await saveImageToStorage(user.id, photo);
-          userData['photo']=url;
+        if (exists) {
+          url = await saveImageToStorage(user.id, photo);
+          userData['photo'] = url;
           return await addUserToB(userData);
         }
-      }else {
-        userData['photo']='https://www.iconfinder.com/data/icons/avatars-circle-2/72/146-512.png';
+      } else {
+        userData['photo'] =
+            'https://www.iconfinder.com/data/icons/avatars-circle-2/72/146-512.png';
         return await addUserToB(userData);
       }
-
     } on FirebaseException catch (e) {
       throw SignUpFailure(message: e.message);
+    }
+  }
+
+  Future<void> signInGoogle(bool login) async {
+    if (login) {
+      await logInWithGoogle();
+    } else {
+      final googleUser = await _googleSignIn.signIn();
+      await signupWithGoogle(googleUser);
     }
   }
 
@@ -125,7 +134,7 @@ class AuthenticationRepository {
 
       List<String> list =
           await _firebaseAuth.fetchSignInMethodsForEmail(googleUser.email);
-      if (list.isNotEmpty && list.elementAt(0)=='google.com') {
+      if (list.isNotEmpty && list.elementAt(0) == 'google.com') {
         final googleAuth = await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
@@ -133,15 +142,15 @@ class AuthenticationRepository {
         );
         await _firebaseAuth.signInWithCredential(credential);
       } else {
-        await _googleSignIn.signOut();
-        throw LogInWithGoogleFailure(message: "Sorry user does not exist");
+        // await _googleSignIn.signOut();
+        // throw LogInWithGoogleFailure(message: "Sorry user does not exist");
+        await signupWithGoogle(googleUser);
       }
-
     } on FirebaseException catch (e) {
       print('ex:${e.message}');
       throw LogInWithGoogleFailure(message: e.message);
-    } on Exception catch(ex){
-      throw LogInWithGoogleFailure(message: "Sign in Canceled");
+    } on Exception catch (ex) {
+      throw LogInWithGoogleFailure(message: '$ex');
     }
   }
 
@@ -164,9 +173,10 @@ class AuthenticationRepository {
     }
   }
 
-  Future<UserModel.User> signupWithGoogle() async {
+  Future<UserModel.User> signupWithGoogle(
+      GoogleSignInAccount googleUser) async {
     try {
-      final googleUser = await _googleSignIn.signIn();
+      // final googleUser = await _googleSignIn.signIn();
       final googleAuth = await googleUser.authentication;
 
       List<String> list =
@@ -190,24 +200,25 @@ class AuthenticationRepository {
   }
 
   Future<void> SignupUserWithFBCredentials() async {
-
     try {
       final result = await _facebookLogin.logIn(["email"]);
       // print('Result:${result.errorMessage}');
       switch (result.status) {
         case FacebookLoginStatus.loggedIn:
-
-          var credential = FacebookAuthProvider.credential(result.accessToken.token);
+          var credential =
+              FacebookAuthProvider.credential(result.accessToken.token);
           final graphResponse = await http.get(
               'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${result.accessToken.token}');
           final profile = json.decode(graphResponse.body);
 
           List<String> list =
-          await _firebaseAuth.fetchSignInMethodsForEmail(profile['email']);
+              await _firebaseAuth.fetchSignInMethodsForEmail(profile['email']);
           if (list.isNotEmpty) {
-            throw LogInWithFacebookFailure(message: "User with this account already exist.");
-          }else{
-            var userCredential = await _firebaseAuth.signInWithCredential(credential);
+            throw LogInWithFacebookFailure(
+                message: "User with this account already exist.");
+          } else {
+            var userCredential =
+                await _firebaseAuth.signInWithCredential(credential);
             await addUserToB(userCredential.user.toUser.toJson());
           }
           break;
@@ -220,32 +231,30 @@ class AuthenticationRepository {
 //        _showErrorOnUI(result.errorMessage);
           break;
       }
-
-    }on FirebaseException catch (error) {
+    } on FirebaseException catch (error) {
       print(error);
       throw LogInWithFacebookFailure(message: error.message);
-
     }
   }
 
   Future<void> loginUserWithFBCredentials() async {
-
     try {
       final result = await _facebookLogin.logIn(["email"]);
       // print('Result:${result.errorMessage}');
       switch (result.status) {
         case FacebookLoginStatus.loggedIn:
-
-          var credential = FacebookAuthProvider.credential(result.accessToken.token);
+          var credential =
+              FacebookAuthProvider.credential(result.accessToken.token);
           final graphResponse = await http.get(
               'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${result.accessToken.token}');
           final profile = json.decode(graphResponse.body);
 
           List<String> list =
-          await _firebaseAuth.fetchSignInMethodsForEmail(profile['email']);
+              await _firebaseAuth.fetchSignInMethodsForEmail(profile['email']);
           if (list.isEmpty) {
-            throw LogInWithFacebookFailure(message: "User with this account does not exist.");
-          }else{
+            throw LogInWithFacebookFailure(
+                message: "User with this account does not exist.");
+          } else {
             await _firebaseAuth.signInWithCredential(credential);
           }
           break;
@@ -258,11 +267,9 @@ class AuthenticationRepository {
 //        _showErrorOnUI(result.errorMessage);
           break;
       }
-
-    }on FirebaseException catch (error) {
+    } on FirebaseException catch (error) {
       print(error);
       throw LogInWithFacebookFailure(message: error.message);
-
     }
   }
 
@@ -280,10 +287,10 @@ class AuthenticationRepository {
     }
   }
 
-  Future<String>saveImageToStorage(String id, File photo) async{
+  Future<String> saveImageToStorage(String id, File photo) async {
     try {
       return await new DataRepository().saveProfileImage(uid: id, photo: photo);
-    }on StorageException catch(e){
+    } on StorageException catch (e) {
       print('Storage error:${e.message}');
     }
   }
@@ -304,10 +311,8 @@ class AuthenticationRepository {
     }
   }
 
-
   /// Get the token, save it to the database for current user
   Future<void> saveDeviceToken(String uid) async {
-
     // Get the token for this device
     String fcmToken = await _firebaseMessaging.getToken();
 
@@ -317,15 +322,14 @@ class AuthenticationRepository {
           .collection('user_tokens')
           .doc(uid)
           .collection('tokens')
-          .add({
+          .doc(Platform.operatingSystem)
+          .set({
         'token': fcmToken,
         'createdAt': FieldValue.serverTimestamp(), // optional
         'platform': Platform.operatingSystem // optional
       });
-
     }
   }
-
 }
 
 extension on User {

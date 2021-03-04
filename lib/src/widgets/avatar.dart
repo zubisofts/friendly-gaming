@@ -33,11 +33,10 @@ class Avatar extends StatelessWidget {
           ),
           child: ClipOval(
               child: CachedNetworkImage(
-                height: size,
+            height: size,
             width: size,
             fit: BoxFit.cover,
-            imageUrl: image ??
-                'https://www.valiance.gg/images/089e0ea.png',
+            imageUrl: image ?? 'https://www.valiance.gg/images/089e0ea.png',
             placeholder: (context, url) => Shimmer.fromColors(
               baseColor: Colors.grey[300],
               highlightColor: Colors.grey[100],
@@ -61,7 +60,9 @@ class Avatar extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.fade,
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headline6.color,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         )

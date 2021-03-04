@@ -68,7 +68,7 @@ class _ChatListRowState extends State<ChatListRow> {
                     return Column(
                       children: [
                         CircleAvatar(
-                          radius: 30,
+                          radius: 25,
                           backgroundImage:
                               AssetImage('assets/images/profile_icon.png'),
                         ),

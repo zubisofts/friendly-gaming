@@ -41,6 +41,7 @@ class _ChatInputState extends State<ChatInput> {
                 style: TextStyle(color: Colors.black, fontSize: 15.0),
                 controller: textEditingController,
                 maxLines: 3,
+                minLines: 1,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type a message',
                   hintStyle: TextStyle(color: Colors.grey),
