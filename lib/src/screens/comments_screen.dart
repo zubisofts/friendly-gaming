@@ -57,6 +57,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         ? Container(
                             height: MediaQuery.of(context).size.height,
                             child: ListView.builder(
+                              primary: false,
+                              physics: BouncingScrollPhysics(),
                               itemCount: comments.length,
                               itemBuilder: (BuildContext context, int index) =>
                                   CommentWidget(comments[index]),

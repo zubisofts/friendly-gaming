@@ -173,16 +173,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ? FloatingActionButton(
               key: fabKey,
               tooltip: 'Add Post',
-              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined, color:Colors.white),
+              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined,
+                  color: Colors.white),
               onPressed: () {
                 // scaffoldKey.currentState
                 // .showSnackBar(SnackBar(content: Text('heloo')));
-                if (activePage == 0) {
-                  _showModalBottomSheet(context);
-                } else {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => ContactsScreen()));
-                }
+                // if (activePage == 0) {
+                //   _showModalBottomSheet(context);
+                // } else {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        AddPostScreen(widget.user)));
+                // }
               })
           : SizedBox.shrink(),
       bottomNavigationBar: ConvexAppBar(

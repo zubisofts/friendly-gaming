@@ -100,27 +100,26 @@ class MessagingRepository {
     return null;
   }
 
-  Future<String> addLike(Like like) async {
+  Future<void> addLike(Like like) async {
     try {
-      var documentReference = await FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('post_likes')
           .doc(like.postId)
           .collection('likes')
-          .add(like.toMap());
-      return documentReference.id;
+          .doc(like.id)
+          .set(like.toMap());
     } on FirebaseException catch (e) {
       print('Add Comment Error:${e.message}');
-      return null;
     }
   }
 
-  Future<void> unLike(String likeId, String postId) async {
+  Future<void> unLike(String uid, String postId) async {
     try {
       await FirebaseFirestore.instance
           .collection('post_likes')
           .doc(postId)
           .collection('likes')
-          .doc(likeId)
+          .doc(uid)
           .delete();
     } on FirebaseException catch (e) {
       print('Add Comment Error:${e.message}');

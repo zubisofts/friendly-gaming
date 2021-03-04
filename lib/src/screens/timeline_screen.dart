@@ -14,14 +14,10 @@ class TimelineScreen extends StatefulWidget {
   _TimelineScreenState createState() => _TimelineScreenState();
 }
 
-class _TimelineScreenState extends State<TimelineScreen>
-    with AutomaticKeepAliveClientMixin<TimelineScreen> {
-  @override
-  bool get wantKeepAlive => true;
-
+class _TimelineScreenState extends State<TimelineScreen> {
+  
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     context.bloc<DataBloc>().add(FetchPostEvent());
     return Container(
       decoration: BoxDecoration(

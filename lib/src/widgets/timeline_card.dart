@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
+import 'package:friendly_gaming/src/model/comment.dart';
 import 'package:friendly_gaming/src/model/like.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
+import 'package:friendly_gaming/src/repository/messaging_repo.dart';
 import 'package:friendly_gaming/src/screens/comments_screen.dart';
 import 'package:friendly_gaming/src/utils/fg_utils.dart';
 import 'package:friendly_gaming/src/widgets/win_switch.dart';
@@ -266,12 +268,12 @@ class _TimelineCardState extends State<TimelineCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                BlocBuilder<DataBloc, DataState>(
-                  buildWhen: (previous, current) => current is LikesLoadedState,
-                  builder: (context, state) {
+                StreamBuilder<List<Like>>(
+                  stream: MessagingRepository().likes(widget.timelineData.id),
+                  builder: (context, snapshot) {
                     List<Like> likes = [];
-                    if (state is LikesLoadedState) {
-                      likes = state.likes;
+                    if (snapshot.hasData) {
+                      likes = snapshot.data;
                     }
                     return Row(
                       children: [
@@ -286,10 +288,10 @@ class _TimelineCardState extends State<TimelineCard> {
                                   postId: widget.timelineData.id,
                                   likeId: AuthBloc.uid));
                             } else {
-                              
-                                  context.read<DataBloc>().add(AddLikeEvent(Like(
+                              context.read<DataBloc>().add(AddLikeEvent(Like(
                                   postId: widget.timelineData.id,
                                   userId: AuthBloc.uid,
+                                  id: AuthBloc.uid,
                                   time:
                                       DateTime.now().millisecondsSinceEpoch)));
                             }
@@ -302,9 +304,6 @@ class _TimelineCardState extends State<TimelineCard> {
                                       0
                                   ? Colors.redAccent
                                   : Colors.blueGrey),
-                        ),
-                        SizedBox(
-                          width: 5,
                         ),
                         Text(
                           '${likes.length}',
@@ -329,16 +328,13 @@ class _TimelineCardState extends State<TimelineCard> {
                                       CommentsScreen(widget.timelineData),
                                 ),
                             icon: Icon(Icons.message, color: Colors.blueGrey)),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        BlocBuilder<DataBloc, DataState>(
-                          buildWhen: (previous, current) =>
-                              current is CommentsLoadedState,
-                          builder: (context, state) {
-                            if (state is CommentsLoadedState) {
+                        StreamBuilder<List<Comment>>(
+                          stream: MessagingRepository()
+                              .comments(widget.timelineData.id),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
                               return Text(
-                                '${state.comments.length}',
+                                '${snapshot.data.length}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Theme.of(context)
