@@ -228,43 +228,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     child: ListTile(
                       leading: Icon(
-                        Icons.settings,
-                        color: Colors.blue,
-                      ),
-                      title: Text(
-                        'Settings',
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                .color
-                                .withOpacity(0.5),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      trailing: Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.blue,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: AppSettingsScreen()));
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.0,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                    child: ListTile(
-                      leading: Icon(
                         Icons.checkroom_outlined,
                         color: Colors.blue,
                       ),
@@ -289,6 +252,43 @@ class _ProfileScreenState extends State<ProfileScreen>
                             PageTransition(
                                 type: PageTransitionType.rightToLeft,
                                 child: GameRequestsScreen()));
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.0,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.settings,
+                        color: Colors.blue,
+                      ),
+                      title: Text(
+                        'Settings',
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                .color
+                                .withOpacity(0.5),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Icon(
+                        Icons.keyboard_arrow_right,
+                        color: Colors.blue,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: AppSettingsScreen()));
                       },
                     ),
                   ),

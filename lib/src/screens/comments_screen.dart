@@ -166,10 +166,23 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 }
 
-class CommentWidget extends StatelessWidget {
+class CommentWidget extends StatefulWidget {
   final Comment comment;
 
   CommentWidget(this.comment);
+
+  @override
+  _CommentWidgetState createState() => _CommentWidgetState();
+}
+
+class _CommentWidgetState extends State<CommentWidget> {
+  Stream<User> _userDetails;
+
+  @override
+  void initState() {
+    _userDetails = DataRepository().userDetails(widget.comment.userId);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,10 +194,11 @@ class CommentWidget extends StatelessWidget {
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             mainAxisSize: MainAxisSize.min,
             children: [
               StreamBuilder<User>(
-                  stream: DataRepository().userDetails(comment.userId),
+                  stream: _userDetails,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       User user = snapshot.data;
@@ -197,7 +211,8 @@ class CommentWidget extends StatelessWidget {
 
                     return CircleAvatar(
                       radius: 18.0,
-                      backgroundImage: AssetImage('assets/images/img1.jpg'),
+                      backgroundImage:
+                          AssetImage('assets/images/profile_icon.png'),
                     );
                   }),
               SizedBox(width: 16.0),
@@ -208,7 +223,8 @@ class CommentWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       StreamBuilder<User>(
-                          stream: DataRepository().userDetails(comment.userId),
+                          stream: DataRepository()
+                              .userDetails(widget.comment.userId),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               User user = snapshot.data;
@@ -224,7 +240,7 @@ class CommentWidget extends StatelessWidget {
                             return SizedBox.shrink();
                           }),
                       SizedBox(height: 8.0),
-                      Text('${comment.comment}',
+                      Text('${widget.comment.comment}',
                           softWrap: true,
                           style: TextStyle(
                               color:
@@ -236,7 +252,7 @@ class CommentWidget extends StatelessWidget {
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(25.0)),
                         child: Text(
-                            '${FGUtils.displayTimeAgoFromTimestamp(comment.time)}',
+                            '${FGUtils.displayTimeAgoFromTimestamp(widget.comment.time)}',
                             softWrap: true,
                             style: TextStyle(fontSize: 12, color: Colors.blue)),
                       )

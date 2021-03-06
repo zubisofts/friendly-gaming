@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
+import 'package:friendly_gaming/src/model/post.dart';
+import 'package:friendly_gaming/src/utils/fg_utils.dart';
 import 'package:friendly_gaming/src/widgets/timeline_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:grouped_list/grouped_list.dart';
+import 'package:intl/intl.dart';
 
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({
@@ -15,7 +19,6 @@ class TimelineScreen extends StatefulWidget {
 }
 
 class _TimelineScreenState extends State<TimelineScreen> {
-  
   @override
   Widget build(BuildContext context) {
     context.bloc<DataBloc>().add(FetchPostEvent());
@@ -31,20 +34,65 @@ class _TimelineScreenState extends State<TimelineScreen> {
                 .where((post) => post.status == 'completed')
                 .toList();
             return posts.isNotEmpty
-                ? ListView.builder(
-                    addAutomaticKeepAlives: true,
+                ? GroupedListView<Post, String>(
                     physics: BouncingScrollPhysics(),
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                            bottom: index == posts.length - 1 ? 0.0 : 0.0),
-                        child: TimelineCard(
-                          timelineData: posts[index],
-                        ),
+                    elements: posts,
+                    groupBy: (post) {
+                      return DateFormat.yMMMMEEEEd().format(post.date);
+                    },
+                    groupSeparatorBuilder: (post) {
+                      // String date = DateFormat('yyyy-MM-dd').format(post.date);
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 32.0, vertical: 8.0),
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(50.0)),
+                              child: Text(post,
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .color))),
+                        ],
                       );
                     },
+                    itemBuilder: (context, Post post) => TimelineCard(
+                      timelineData: post,
+                    ),
+                    groupComparator: (post1, post2) {
+                      return post1.compareTo(post2);
+                    },
+                    itemComparator: (post1, post2) {
+                      // DateTime now = DateTime.now();
+                      String d1 = DateFormat('yyyy-MM-dd').format(post1.date);
+                      String d2 = DateFormat('yyyy-MM-dd').format(post2.date);
+                      return d1.compareTo(d2);
+                    },
+
+                    useStickyGroupSeparators: true, // optional
+                    floatingHeader: true, // optional
+                    order: GroupedListOrder.ASC, // optional
                   )
+                // ? ListView.builder(
+                //     addAutomaticKeepAlives: true,
+                //     physics: BouncingScrollPhysics(),
+                //     itemCount: posts.length,
+                //     itemBuilder: (context, index) {
+                //       return Padding(
+                //         padding: EdgeInsets.only(
+                //             bottom: index == posts.length - 1 ? 0.0 : 0.0),
+                //         child: TimelineCard(
+                //           timelineData: posts[index],
+                //         ),
+                //       );
+                //     },
+                //   )
                 : Center(
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.5,

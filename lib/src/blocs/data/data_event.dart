@@ -69,6 +69,9 @@ class EditPostEvent extends DataEvent {
 }
 
 class FetchPostEvent extends DataEvent {
+  final int page;
+
+  FetchPostEvent({this.page});
   @override
   List<Object> get props => [];
 }

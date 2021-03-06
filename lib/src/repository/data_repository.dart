@@ -143,12 +143,14 @@ class DataRepository {
     return null;
   }
 
-  Stream<List<Post>> get posts {
+  Stream<List<Post>> posts({page}) {
     try {
       return FirebaseFirestore.instance
           .collection("posts")
           // .where('status', isEqualTo: 'completed')
           .orderBy('date', descending: true)
+          // .startAt(page)
+          // .limit(5)
           .snapshots()
           .asyncMap((snapshots) async {
         return await convertSnapshots(snapshots);

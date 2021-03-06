@@ -30,7 +30,8 @@ dependencies:
   flutter_spinkit: ^4.1.2
   badges: ^1.1.3
   streaming_shared_preferences: ^1.0.1
-  flutter_svg: ^0.19.1
+  flutter_svg: ^0.21.0-nullsafety.0
+  grouped_list: ^4.0.0-nullsafety.1
   page_transition: "^1.1.7+2"
   image_picker: ^0.6.7+11
   flutter_image_compress: ^0.7.0
@@ -39,7 +40,7 @@ dependencies:
   screenshot: ^0.3.0
   timeline_tile: ^1.0.0
   path_provider: ^1.5.0
-  dotted_border: ^1.0.6
+  # dotted_border: ^1.0.6
   # awesome_dialog: ^1.2.0
   bubble: ^1.1.9+1
   firebase_core : ^0.5.0

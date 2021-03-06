@@ -32,12 +32,17 @@ class _TimelineCardState extends State<TimelineCard> {
   User user1, user2;
   ScreenshotController screenshotController = ScreenshotController();
 
+  var _commentsStream;
+  var _likesStream;
+
   @override
   void initState() {
     firstUserStream =
         DataRepository().userDetails(widget.timelineData.firstPlayerId);
     secondUserStream =
         DataRepository().userDetails(widget.timelineData.secondPlayerId);
+    _commentsStream = MessagingRepository().comments(widget.timelineData.id);
+    _likesStream = MessagingRepository().likes(widget.timelineData.id);
     context.read<DataBloc>().add(FetchCommentsEvent(widget.timelineData.id));
     context.read<DataBloc>().add(FetchLikesEvent(widget.timelineData.id));
     super.initState();
@@ -269,7 +274,7 @@ class _TimelineCardState extends State<TimelineCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 StreamBuilder<List<Like>>(
-                  stream: MessagingRepository().likes(widget.timelineData.id),
+                  stream: _likesStream,
                   builder: (context, snapshot) {
                     List<Like> likes = [];
                     if (snapshot.hasData) {
@@ -329,8 +334,7 @@ class _TimelineCardState extends State<TimelineCard> {
                                 ),
                             icon: Icon(Icons.message, color: Colors.blueGrey)),
                         StreamBuilder<List<Comment>>(
-                          stream: MessagingRepository()
-                              .comments(widget.timelineData.id),
+                          stream: _commentsStream,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Text(

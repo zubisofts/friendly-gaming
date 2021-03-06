@@ -34,7 +34,8 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   StreamSubscription<List<Chat>> _chatsChangeSubscription;
 
   DataBloc({this.dataRepository}) : super(DataInitial()) {
-    _postsStateChangesSubscription = dataRepository.posts.listen((posts) {
+    _postsStateChangesSubscription =
+        dataRepository.posts.call(page: 1).listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
     add(FetchRequestsEvent());
@@ -73,7 +74,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     }
 
     if (event is FetchPostEvent) {
-      yield* _mapFetchPostsEventToState();
+      yield* _mapFetchPostsEventToState(page: event?.page);
     }
 
     if (event is PostFetchedEvent) {
@@ -248,9 +249,10 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     }
   }
 
-  Stream<DataState> _mapFetchPostsEventToState() async* {
+  Stream<DataState> _mapFetchPostsEventToState({int page}) async* {
     _postsStateChangesSubscription?.cancel();
-    _postsStateChangesSubscription = dataRepository.posts.listen((posts) {
+    _postsStateChangesSubscription =
+        dataRepository.posts.call(page: page).listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
   }
