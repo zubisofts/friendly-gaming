@@ -109,8 +109,9 @@ class _MyAppState extends State<MyApp> {
           title: 'Friendly Gaming',
           theme: AppTheme.lightTheme
               .copyWith(visualDensity: VisualDensity.adaptivePlatformDensity),
-          darkTheme: AppTheme.darkTheme
-              .copyWith(visualDensity: VisualDensity.adaptivePlatformDensity),
+          darkTheme: AppTheme.darkTheme.copyWith(
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              brightness: Brightness.dark),
           themeMode: !value ? ThemeMode.light : ThemeMode.dark,
           home: SplashScreen(),
         );

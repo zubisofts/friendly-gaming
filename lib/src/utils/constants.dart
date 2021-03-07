@@ -1,5 +1,6 @@
 class Constants {
   static String THEME_PREF_KEY = 'pref_theme_key';
+  static String SHOW_GAME_INFO_KEY_1 = 'game_score_edit_info';
 
   /// Define App ID and Token
   static final String APP_ID = "3dfdefb3b8884e63a2b3588a5522544f";

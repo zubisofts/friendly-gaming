@@ -16,7 +16,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   @override
   void initState() {
-    context.bloc<DataBloc>().add(FetchUsersEvent());
+    context.read<DataBloc>().add(FetchUsersEvent());
     super.initState();
   }
 
@@ -41,7 +41,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
             margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: TextFormField(
               onChanged: (value) =>
-                  context.bloc<DataBloc>().add(SearchUserEvent(query: value)),
+                  context.read<DataBloc>().add(SearchUserEvent(query: value)),
               style:
                   TextStyle(color: Theme.of(context).textTheme.headline6.color),
               decoration: InputDecoration(
@@ -90,10 +90,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       user: users[index],
                       onTap: (user) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MessageScreen(
-                      user:user
-                    ),
-                  ));
+                          builder: (context) => MessageScreen(user: user),
+                        ));
                       },
                     );
                   },

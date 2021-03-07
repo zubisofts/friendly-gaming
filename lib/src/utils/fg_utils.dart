@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -43,5 +46,14 @@ class FGUtils {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
     String time = DateFormat.jm().format(date);
     return time;
+  }
+
+  static Future<void> shareScore(String title, imageData, String text) async {
+    try {
+      Share.file(title, 'Image.png', imageData, "image/png", text: text);
+    } catch (ex) {
+      print(ex);
+    }
+    // Share.text(title,"hdfjhil","text");
   }
 }

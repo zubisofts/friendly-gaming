@@ -9,7 +9,6 @@ import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
 import 'package:friendly_gaming/src/screens/contacts_screen.dart';
 import 'package:friendly_gaming/src/screens/incoming_call_screen.dart';
-import 'package:friendly_gaming/src/screens/new_challenge.dart';
 import 'package:friendly_gaming/src/screens/notification_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
 import 'package:friendly_gaming/src/screens/timeline_screen.dart';
@@ -46,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     pageController = PageController(
       initialPage: activePage,
     );
-    context.bloc<DataBloc>().add(FetchNotificationEvent());
+    context.read<DataBloc>().add(FetchNotificationEvent());
     super.initState();
   }
 
@@ -60,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16))),
         elevation: 0.5,
-        toolbarHeight: 90,
+        toolbarHeight: 70,
         leading: Container(),
         // backgroundColor: Colors.white,
         // centerTitle: true,
@@ -109,6 +108,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
+          // IconButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //           context,
+          //           PageTransition(
+          //               type: PageTransitionType.rightToLeft,
+          //               child: NotificationScreen()));
+          //     },
+          //     icon: Icon(Icons.filter_list_outlined, color: Colors.blueGrey)),
           BlocBuilder<DataBloc, DataState>(
             buildWhen: (previous, current) =>
                 current is NotificationsFetchedState,
@@ -149,39 +157,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: BlocListener<DataBloc, DataState>(
-        listenWhen: (previous, current) => current is IncomingCallReceivedState,
-        listener: (context, state) {
-          if (state is IncomingCallReceivedState) {
-            if (state.call.incoming && !state.call.isActive) {
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: IncomingCallScreen(call: state.call)));
-            }
-          }
-        },
-        child: PageView(
-          physics: NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          children: pages,
-          controller: pageController,
-        ),
+      body: PageView(
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        children: pages,
+        controller: pageController,
       ),
       floatingActionButton: activePage == 0 || activePage == 1
           ? FloatingActionButton(
               key: fabKey,
               tooltip: 'Add Post',
-              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined),
+              child: Icon(activePage == 0 ? Icons.add : Icons.message_outlined,
+                  color: Colors.white),
               onPressed: () {
                 // scaffoldKey.currentState
                 // .showSnackBar(SnackBar(content: Text('heloo')));
-                if (activePage == 0) {
-                  _showModalBottomSheet(context);
-                } else {
+                if (activePage == 1) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => ContactsScreen()));
+                } else {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          AddPostScreen(widget.user)));
                 }
               })
           : SizedBox.shrink(),
@@ -211,46 +208,46 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showModalBottomSheet(context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: new Wrap(
-          children: <Widget>[
-            new ListTile(
-                leading: new Icon(Icons.score, color: Colors.blue),
-                title: new Text('Add New Scoreboard',
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.headline6.color,
-                        fontWeight: FontWeight.bold)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => AddPostScreen(),
-                  ));
-                }),
-            new ListTile(
-              leading: new Icon(Icons.gamepad, color: Colors.blue),
-              title: new Text('New Game Challenge',
-                  style: TextStyle(
-                      color: Theme.of(context).textTheme.headline6.color,
-                      fontWeight: FontWeight.bold)),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: NewChallenge()));
-              },
-            ),
-          ],
-        ),
-      ),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
-    );
-  }
+  // void _showModalBottomSheet(context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (context) => Container(
+  //       color: Theme.of(context).scaffoldBackgroundColor,
+  //       child: new Wrap(
+  //         children: <Widget>[
+  //           new ListTile(
+  //               leading: new Icon(Icons.score, color: Colors.blue),
+  //               title: new Text('Add New Scoreboard',
+  //                   style: TextStyle(
+  //                       color: Theme.of(context).textTheme.headline6.color,
+  //                       fontWeight: FontWeight.bold)),
+  //               onTap: () {
+  //                 Navigator.of(context).pop();
+  //                 Navigator.of(context).push(MaterialPageRoute(
+  //                   builder: (context) => AddPostScreen(widget.user),
+  //                 ));
+  //               }),
+  //           new ListTile(
+  //             leading: new Icon(Icons.gamepad, color: Colors.blue),
+  //             title: new Text('New Game Challenge',
+  //                 style: TextStyle(
+  //                     color: Theme.of(context).textTheme.headline6.color,
+  //                     fontWeight: FontWeight.bold)),
+  //             onTap: () {
+  //               Navigator.of(context).pop();
+  //               Navigator.push(
+  //                   context,
+  //                   PageTransition(
+  //                       type: PageTransitionType.bottomToTop,
+  //                       child: NewChallenge()));
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
+  //   );
+  // }
 }

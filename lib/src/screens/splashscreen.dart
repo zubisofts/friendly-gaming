@@ -9,8 +9,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-@override
+  @override
   void initState() {
     Timer(
         Duration(seconds: 3),
@@ -18,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context, MaterialPageRoute(builder: (context) => Wrapper())));
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +31,14 @@ class _SplashScreenState extends State<SplashScreen> {
               CircleAvatar(
                 radius: 60,
                 child: Image.asset(
-                  'assets/images/controller.png',
+                  'assets/images/logo.png',
                   fit: BoxFit.cover,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 70, bottom: 45),
                 child: Text(
-                  'Friendly Gaming',
+                  'SURUU',
                   style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,

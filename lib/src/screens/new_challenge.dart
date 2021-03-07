@@ -26,8 +26,9 @@ class _NewChallengeState extends State<NewChallenge> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text('Select Opponent', style: TextStyle(
-            color: Theme.of(context).textTheme.headline6.color)),
+        title: Text('Select Opponent',
+            style:
+                TextStyle(color: Theme.of(context).textTheme.headline6.color)),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
@@ -42,11 +43,20 @@ class _NewChallengeState extends State<NewChallenge> {
             child: TextFormField(
               onChanged: (value) =>
                   context.bloc<DataBloc>().add(SearchUserEvent(query: value)),
-              style: TextStyle(color: Theme.of(context).textTheme.headline6.color),
+              style:
+                  TextStyle(color: Theme.of(context).textTheme.headline6.color),
               decoration: InputDecoration(
                   hintText: 'Search opponent',
-                  hintStyle: TextStyle(color: Theme.of(context).textTheme.headline6.color.withOpacity(0.7)),
-                  prefixIcon: Icon(Icons.search,color: Theme.of(context).textTheme.headline6.color,),
+                  hintStyle: TextStyle(
+                      color: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          .color
+                          .withOpacity(0.7)),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).textTheme.headline6.color,
+                  ),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.0))),
             ),
@@ -100,193 +110,208 @@ class _NewChallengeState extends State<NewChallenge> {
     context.bloc<DataBloc>().add(RefreshEvent());
     showModalBottomSheet(
         context: context,
-        builder: (context)=>Stack(
-          overflow: Overflow.visible,
-          children: [
-            Positioned(
-              top: -40,
-              left: MediaQuery.of(context).size.width * 0.4,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 4,
-                            color: Theme.of(context).scaffoldBackgroundColor),
-                        shape: BoxShape.circle),
-                    child: CircleAvatar(
-                      radius: 40.0,
-                      backgroundImage:
-                      CachedNetworkImageProvider(user.photo),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                ],
-              ),
-            ),
-            Wrap(
+        builder: (context) => Stack(
+              overflow: Overflow.visible,
               children: [
-                Container(
-                  padding: EdgeInsets.only(bottom: 16.0, top: 50.0),
-                  width: MediaQuery.of(context).size.width,
+                Positioned(
+                  top: -40,
+                  left: MediaQuery.of(context).size.width * 0.4,
                   child: Column(
-                    children: <Widget>[
-                      Text(
-                        user.name,
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.headline6.color,
-                            fontWeight: FontWeight.bold, fontSize: 24),
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 4,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor),
+                            shape: BoxShape.circle),
+                        child: CircleAvatar(
+                          radius: 40.0,
+                          backgroundImage:
+                              CachedNetworkImageProvider(user.photo),
+                        ),
                       ),
                       SizedBox(
                         height: 8,
                       ),
-                      Wrap(
-                        children: List.generate(
-                            5,
-                                (index) => Icon(
-                              Icons.star,
-                              color: Colors.orangeAccent,
-                            )),
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 80.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Total games played:',
-                              style: TextStyle(
-                                color: Theme.of(context).textTheme.headline6.color,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              '56',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18.0,
-                                  color: Colors.blue),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 80.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Games won:',
-                              style: TextStyle(
-                                color: Theme.of(context).textTheme.headline6.color,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              '35',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18.0,
-                                  color: Colors.green),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 80.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Games Lost:',
-                              style: TextStyle(
-                                  color: Theme.of(context).textTheme.headline6.color,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              '15',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18.0,
-                                  color: Colors.red),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 80.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Games drawn:',
-                              style: TextStyle(
-                                  color: Theme.of(context).textTheme.headline6.color,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              '6',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18.0,
-                                  color: Colors.blueAccent),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 32,
-                      ),
-                      BlocBuilder<DataBloc, DataState>(
-                        buildWhen: (previous, current)=>
-                        current is SendingRequestState ||
-                        current is RequestSentState,
-                        builder: (context, state) {
-                          if (state is SendingRequestState) {
-                            // print('********${user.id}*******');
-                            return SendButton(
-                              isSent: false,
-                              isLoading: true,
-                              text: 'Sending...',
-                              receiverId: user.id,
-                            );
-                          }
-                          if (state is RequestSentState) {
-                            return SendButton(
-                              isSent: true,
-                              isLoading: false,
-                              text: 'Request Sent',
-                              receiverId: user.id,
-                            );
-                          }
-                          return SendButton(
-                            isSent: false,
-                            isLoading: false,
-                            text: 'Send Challenge',
-                            receiverId: user.id,
-                          );
-                        },
-                      )
                     ],
                   ),
                 ),
+                Wrap(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(bottom: 16.0, top: 50.0),
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            user.name,
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).textTheme.headline6.color,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Wrap(
+                            children: List.generate(
+                                5,
+                                (index) => Icon(
+                                      Icons.star,
+                                      color: Colors.orangeAccent,
+                                    )),
+                          ),
+                          SizedBox(
+                            height: 16.0,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 80.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Total games played:',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .color,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(
+                                  '56',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18.0,
+                                      color: Colors.blue),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 80.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Games won:',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .color,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(
+                                  '35',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18.0,
+                                      color: Colors.green),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 80.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Games Lost:',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .color,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(
+                                  '15',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18.0,
+                                      color: Colors.red),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 80.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Games drawn:',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .color,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(
+                                  '6',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18.0,
+                                      color: Colors.blueAccent),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 32,
+                          ),
+                          BlocBuilder<DataBloc, DataState>(
+                            buildWhen: (previous, current) =>
+                                current is SendingRequestState ||
+                                current is RequestSentState,
+                            builder: (context, state) {
+                              if (state is SendingRequestState) {
+                                // print('********${user.id}*******');
+                                return SendButton(
+                                  isSent: false,
+                                  isLoading: true,
+                                  text: 'Sending...',
+                                  receiverId: user.id,
+                                );
+                              }
+                              if (state is RequestSentState) {
+                                return SendButton(
+                                  isSent: true,
+                                  isLoading: false,
+                                  text: 'Request Sent',
+                                  receiverId: user.id,
+                                );
+                              }
+                              return SendButton(
+                                isSent: false,
+                                isLoading: false,
+                                text: 'Send Challenge',
+                                receiverId: user.id,
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
         elevation: 8.0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0)))
-    );
+                topRight: Radius.circular(32.0))));
   }
 }
 
@@ -311,13 +336,14 @@ class SendButton extends StatelessWidget {
               ? null
               : () {
                   print('*******$receiverId******');
-                  context.bloc<DataBloc>().add(SendRequestEvent(
-                      requestType: 'SOCCER CHALLENGE', receiverId: receiverId));
+                  // context.read<DataBloc>().add(SendRequestEvent(
+                  //     requestType: 'SOCCER CHALLENGE', receiverId: receiverId));
                 },
           padding: EdgeInsets.all(8.0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-          color: isLoading || isSent ? Colors.grey : Theme.of(context).accentColor,
+          color:
+              isLoading || isSent ? Colors.grey : Theme.of(context).accentColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -50,14 +50,28 @@ class SearchUserEvent extends DataEvent {
 
 class AddPostEvent extends DataEvent {
   final Post post;
+  final Request request;
 
-  AddPostEvent(this.post);
+  AddPostEvent(this.post, {this.request});
 
   @override
-  List<Object> get props => [post];
+  List<Object> get props => [post, request];
+}
+
+class EditPostEvent extends DataEvent {
+  final Map<String, dynamic> data;
+  final String postId;
+
+  EditPostEvent(this.data, this.postId);
+
+  @override
+  List<Object> get props => [data];
 }
 
 class FetchPostEvent extends DataEvent {
+  final int page;
+
+  FetchPostEvent({this.page});
   @override
   List<Object> get props => [];
 }
@@ -71,14 +85,55 @@ class PostFetchedEvent extends DataEvent {
   List<Object> get props => [posts];
 }
 
-class SendRequestEvent extends DataEvent {
-  final String requestType;
-  final String receiverId;
+class AddCommentEvent extends DataEvent {
+  final Comment comment;
 
-  SendRequestEvent({this.requestType, this.receiverId});
+  AddCommentEvent(
+    this.comment,
+  );
 
   @override
-  List<Object> get props => [requestType, receiverId];
+  List<Object> get props => [comment];
+}
+
+class DeleteCommentEvent extends DataEvent {
+  final String commentId;
+  final String postId;
+
+  DeleteCommentEvent({this.commentId, this.postId});
+
+  @override
+  List<Object> get props => [commentId, postId];
+}
+
+class AddLikeEvent extends DataEvent {
+  final Like like;
+
+  AddLikeEvent(
+    this.like,
+  );
+
+  @override
+  List<Object> get props => [like];
+}
+
+class RemoveLikeEvent extends DataEvent {
+  final String likeId;
+  final String postId;
+
+  RemoveLikeEvent({this.likeId, this.postId});
+
+  @override
+  List<Object> get props => [likeId, postId];
+}
+
+class SendRequestEvent extends DataEvent {
+  final Request request;
+
+  SendRequestEvent({this.request});
+
+  @override
+  List<Object> get props => [request];
 }
 
 class FetchRequestsEvent extends DataEvent {
@@ -178,4 +233,32 @@ class MessagesFetchedEvent extends DataEvent {
   MessagesFetchedEvent({@required this.messages});
   @override
   List<Object> get props => [props];
+}
+
+class FetchCommentsEvent extends DataEvent {
+  final String postId;
+  FetchCommentsEvent(this.postId);
+  @override
+  List<Object> get props => [postId];
+}
+
+class CommentsFetchedEvent extends DataEvent {
+  final List<Comment> comments;
+  CommentsFetchedEvent(this.comments);
+  @override
+  List<Object> get props => [comments];
+}
+
+class FetchLikesEvent extends DataEvent {
+  final String postId;
+  FetchLikesEvent(this.postId);
+  @override
+  List<Object> get props => [postId];
+}
+
+class LikesFetchedEvent extends DataEvent {
+  final List<Like> likes;
+  LikesFetchedEvent(this.likes);
+  @override
+  List<Object> get props => [likes];
 }

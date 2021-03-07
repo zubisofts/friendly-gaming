@@ -1,10 +1,6 @@
 import 'dart:convert';
 
-enum RequestStatus{
-  Pending,
-  Accepted,
-  Declined
-}
+enum RequestStatus { Pending, Accepted, Declined }
 
 class Request {
   String requestId;
@@ -13,7 +9,7 @@ class Request {
   int date;
   String requestType;
   String status;
-
+  String gameId;
   Request({
     this.requestId,
     this.senderId,
@@ -21,15 +17,17 @@ class Request {
     this.date,
     this.requestType,
     this.status,
+    this.gameId,
   });
 
   Request copyWith({
     String requestId,
     String senderId,
     String receiverId,
-    DateTime date,
+    int date,
     String requestType,
     String status,
+    String gameId,
   }) {
     return Request(
       requestId: requestId ?? this.requestId,
@@ -37,7 +35,8 @@ class Request {
       receiverId: receiverId ?? this.receiverId,
       date: date ?? this.date,
       requestType: requestType ?? this.requestType,
-      status: status ?? this.status
+      status: status ?? this.status,
+      gameId: gameId ?? this.gameId,
     );
   }
 
@@ -48,7 +47,8 @@ class Request {
       'receiverId': receiverId,
       'date': date,
       'requestType': requestType,
-      'status':status,
+      'status': status,
+      'gameId': gameId,
     };
   }
 
@@ -62,6 +62,7 @@ class Request {
       date: map['date'],
       requestType: map['requestType'],
       status: map['status'],
+      gameId: map['gameId'],
     );
   }
 
@@ -72,7 +73,7 @@ class Request {
 
   @override
   String toString() {
-    return 'Request(requestId: $requestId, senderId: $senderId, receiverId: $receiverId, date: $date, requestType: $requestType, status:$status)';
+    return 'Request(requestId: $requestId, senderId: $senderId, receiverId: $receiverId, date: $date, requestType: $requestType, status: $status, gameId: $gameId)';
   }
 
   @override
@@ -85,7 +86,8 @@ class Request {
         o.receiverId == receiverId &&
         o.date == date &&
         o.requestType == requestType &&
-        o.status == status;
+        o.status == status &&
+        o.gameId == gameId;
   }
 
   @override
@@ -95,6 +97,7 @@ class Request {
         receiverId.hashCode ^
         date.hashCode ^
         requestType.hashCode ^
-        status.hashCode;
+        status.hashCode ^
+        gameId.hashCode;
   }
 }

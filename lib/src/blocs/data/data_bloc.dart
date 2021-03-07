@@ -6,12 +6,15 @@ import 'package:equatable/equatable.dart';
 import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/model/call.dart';
 import 'package:friendly_gaming/src/model/chat.dart';
+import 'package:friendly_gaming/src/model/comment.dart';
+import 'package:friendly_gaming/src/model/like.dart';
 import 'package:friendly_gaming/src/model/message.dart';
 import 'package:friendly_gaming/src/model/notification.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/request.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
+import 'package:friendly_gaming/src/repository/messaging_repo.dart';
 import 'package:meta/meta.dart';
 
 part 'data_event.dart';
@@ -26,10 +29,13 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   StreamSubscription<List<Request>> _requestsChangesSubscription;
   StreamSubscription<Call> _callChangeSubscription;
   StreamSubscription<List<Message>> _messagesChangeSubscription;
+  StreamSubscription<List<Comment>> _commentsChangeSubscription;
+  StreamSubscription<List<Like>> _likesChangeSubscription;
   StreamSubscription<List<Chat>> _chatsChangeSubscription;
 
   DataBloc({this.dataRepository}) : super(DataInitial()) {
-    _postsStateChangesSubscription = dataRepository.posts.listen((posts) {
+    _postsStateChangesSubscription =
+        dataRepository.posts.call(page: 1).listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
     add(FetchRequestsEvent());
@@ -64,25 +70,23 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     }
 
     if (event is AddPostEvent) {
-      yield* _mapAddPostEventToState(event.post);
+      yield* _mapAddPostEventToState(event.post, event.request);
     }
 
     if (event is FetchPostEvent) {
-      yield* _mapFetchPostsEventToState();
+      yield* _mapFetchPostsEventToState(page: event?.page);
     }
 
     if (event is PostFetchedEvent) {
       yield PostsFetchedState(posts: event.posts);
     }
 
+    if (event is EditPostEvent) {
+      yield* _mapEditPostEventToState(event.data, event.postId);
+    }
+
     if (event is SendRequestEvent) {
-      yield* _mapSendRequestEventToState(Request(
-        receiverId: event.receiverId,
-        senderId: AuthBloc.uid,
-        date: DateTime.now().millisecondsSinceEpoch,
-        requestType: event.requestType,
-        status: RequestStatus.Pending.toString().split('.').last,
-      ));
+      yield* _mapSendRequestEventToState(event.request);
     }
 
     if (event is FetchRequestsEvent) {
@@ -153,6 +157,44 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     if (event is MessagesFetchedEvent) {
       yield MessagesFetchedState(messages: event.messages);
     }
+
+    if (event is FetchCommentsEvent) {
+      _commentsChangeSubscription =
+          MessagingRepository().comments(event.postId).listen((comments) {
+        add(CommentsFetchedEvent(comments));
+      });
+    }
+
+    if (event is CommentsFetchedEvent) {
+      yield CommentsLoadedState(comments: event.comments);
+    }
+
+    if (event is AddCommentEvent) {
+      yield* _mapAddCommentEventToState(event.comment);
+    }
+
+    if (event is FetchLikesEvent) {
+      _likesChangeSubscription =
+          MessagingRepository().likes(event.postId).listen((likes) {
+        add(LikesFetchedEvent(likes));
+      });
+    }
+
+    if (event is LikesFetchedEvent) {
+      yield LikesLoadedState(likes: event.likes);
+    }
+
+    if (event is AddLikeEvent) {
+      MessagingRepository().addLike(event.like);
+    }
+
+    if (event is RemoveLikeEvent) {
+      MessagingRepository().unLike(event.likeId, event.postId);
+    }
+
+    if (event is DeleteCommentEvent) {
+      MessagingRepository().deleteComent(event.commentId, event.postId);
+    }
   }
 
   @override
@@ -164,6 +206,8 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     _requestsChangesSubscription?.cancel();
     _messagesChangeSubscription?.cancel();
     _chatsChangeSubscription?.cancel();
+    _commentsChangeSubscription?.cancel();
+    _likesChangeSubscription?.cancel();
     return super.close();
   }
 
@@ -195,17 +239,20 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     } catch (e) {}
   }
 
-  Stream<DataState> _mapAddPostEventToState(Post post) async* {
+  Stream<DataState> _mapAddPostEventToState(Post post, Request request) async* {
     try {
       yield PostSavingState();
-      String postId = await dataRepository.savePost(post);
+      String postId = await dataRepository.savePost(post, request);
       yield PostSavedState(postId);
-    } catch (e) {}
+    } catch (e) {
+      print('Error saving POST:$e');
+    }
   }
 
-  Stream<DataState> _mapFetchPostsEventToState() async* {
+  Stream<DataState> _mapFetchPostsEventToState({int page}) async* {
     _postsStateChangesSubscription?.cancel();
-    _postsStateChangesSubscription = dataRepository.posts.listen((posts) {
+    _postsStateChangesSubscription =
+        dataRepository.posts.call(page: page).listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
   }
@@ -231,6 +278,33 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       }
     } catch (e) {
       yield MessageSendErrorState();
+    }
+  }
+
+  Stream<DataState> _mapEditPostEventToState(
+      Map<String, dynamic> data, String postId) async* {
+    try {
+      yield PostEditingState();
+      bool edited = await dataRepository.editPost(data, postId);
+      if (edited) {
+        yield PostEditedState();
+      } else {
+        yield PostEditErrorState();
+      }
+    } catch (e) {
+      yield PostEditErrorState();
+    }
+  }
+
+  Stream<DataState> _mapAddCommentEventToState(Comment comment) async* {
+    try {
+      // yield PostEditingState();
+      String id = await MessagingRepository().addComent(comment);
+      if (id != null) {
+        yield CommentAddedState(commentId: id);
+      }
+    } catch (e) {
+      // yield AddCommentError();
     }
   }
 }

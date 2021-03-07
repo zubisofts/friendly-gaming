@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/notification.dart';
+import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'package:friendly_gaming/src/screens/game_requests_screen.dart';
 import 'package:friendly_gaming/src/utils/fg_utils.dart';
 import 'package:page_transition/page_transition.dart';
@@ -16,7 +18,7 @@ class NotificationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: BlocBuilder<DataBloc, DataState>(
-          buildWhen: (prev,curr)=>curr is NotificationsFetchedState,
+          buildWhen: (prev, curr) => curr is NotificationsFetchedState,
           builder: (context, state) {
             int notifsCount = 0;
             if (state is NotificationsFetchedState) {
@@ -43,12 +45,11 @@ class NotificationScreen extends StatelessWidget {
                 Icons.clear_all,
                 color: Colors.blueGrey,
               ),
-              onPressed: () {
-              })
+              onPressed: () {})
         ],
       ),
       body: BlocBuilder<DataBloc, DataState>(
-        buildWhen: (prev,curr)=>curr is NotificationsFetchedState,
+        buildWhen: (prev, curr) => curr is NotificationsFetchedState,
         builder: (context, state) {
           if (state is NotificationsFetchedState) {
             var notifications = state.notifications;
@@ -65,13 +66,21 @@ class NotificationScreen extends StatelessWidget {
                                 ? Colors.transparent
                                 : Theme.of(context).cardTheme.color),
                         child: ListTile(
-                          onTap: (){
-
-                            String type=notification.type;
-                            if(type==NotificationType.Challenge.toString().split('.').last){
-                              Navigator.push(context, PageTransition(
-                                  type: PageTransitionType.rightToLeft,
-                                  child:GameRequestsScreen(notification: notification,)));
+                          onTap: () async {
+                            String type = notification.type;
+                            if (type ==
+                                NotificationType.Challenge.toString()
+                                    .split('.')
+                                    .last) {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.rightToLeft,
+                                      child: GameRequestsScreen(
+                                        notification: notification,
+                                      )));
+                              DataRepository().deleteNotification(
+                                  notification.notificationId, AuthBloc.uid);
                             }
                           },
                           contentPadding: EdgeInsets.symmetric(
@@ -99,34 +108,39 @@ class NotificationScreen extends StatelessWidget {
                                 ),
                               ),
                               Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    '${FGUtils.displayTimeAgoFromTimestamp(notification.time, numericDates: true)}',
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        fontSize: 11, color: Colors.blue),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  // StreamBuilder(
-                                  //   stream: Stream.periodic(Duration(minutes: 1)),
-                                  //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                                  //         return Text(
-                                  //           '${FGUtils.displayTimeAgoFromTimestamp(notification.time, numericDates: true)}',
-                                  //           textAlign: TextAlign.end,
-                                  //           style: TextStyle(
-                                  //               fontSize: 11, color: Colors.blue),
-                                  //           maxLines: 2,
-                                  //           overflow: TextOverflow.ellipsis,
-                                  //         );
-                                  //   },
-                                  // ),
+                                flex: 3,
+                                child: Text(
+                                  '${FGUtils.displayTimeAgoFromTimestamp(notification.time, numericDates: true)}',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.blue),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                // StreamBuilder(
+                                //   stream: Stream.periodic(Duration(minutes: 1)),
+                                //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                //         return Text(
+                                //           '${FGUtils.displayTimeAgoFromTimestamp(notification.time, numericDates: true)}',
+                                //           textAlign: TextAlign.end,
+                                //           style: TextStyle(
+                                //               fontSize: 11, color: Colors.blue),
+                                //           maxLines: 2,
+                                //           overflow: TextOverflow.ellipsis,
+                                //         );
+                                //   },
+                                // ),
                               )
                             ],
                           ),
-                          subtitle: Text('${notification.description}',style: TextStyle(
-                            color: Theme.of(context).textTheme.subtitle2.color
-                          ),),
+                          subtitle: Text(
+                            '${notification.description}',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2
+                                    .color),
+                          ),
                         ),
                       );
                     })

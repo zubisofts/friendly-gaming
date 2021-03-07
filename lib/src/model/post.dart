@@ -8,7 +8,8 @@ class Post {
   String secondPlayerId;
   Map<String, int> scores;
   String gameType;
-  List<String> images;
+  String status;
+  List<String> updates;
   DateTime date;
   Post({
     this.id,
@@ -16,10 +17,10 @@ class Post {
     this.secondPlayerId,
     this.scores,
     this.gameType,
-    this.images,
+    this.status,
+    this.updates,
     this.date,
   });
-
 
   Post copyWith({
     String id,
@@ -27,7 +28,8 @@ class Post {
     String secondPlayerId,
     Map<String, int> scores,
     String gameType,
-    List<String> images,
+    String status,
+    List<String> updates,
     DateTime date,
   }) {
     return Post(
@@ -36,7 +38,8 @@ class Post {
       secondPlayerId: secondPlayerId ?? this.secondPlayerId,
       scores: scores ?? this.scores,
       gameType: gameType ?? this.gameType,
-      images: images ?? this.images,
+      status: status ?? this.status,
+      updates: updates ?? this.updates,
       date: date ?? this.date,
     );
   }
@@ -48,7 +51,8 @@ class Post {
       'secondPlayerId': secondPlayerId,
       'scores': scores,
       'gameType': gameType,
-      'images': images,
+      'status': status,
+      'updates': updates,
       'date': date?.millisecondsSinceEpoch,
     };
   }
@@ -62,7 +66,8 @@ class Post {
       secondPlayerId: map['secondPlayerId'],
       scores: Map<String, int>.from(map['scores']),
       gameType: map['gameType'],
-      images: List<String>.from(map['images']),
+      status: map['status'],
+      updates: List<String>.from(map['updates']),
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
     );
   }
@@ -73,7 +78,7 @@ class Post {
 
   @override
   String toString() {
-    return 'Post(id: $id, firstPlayerId: $firstPlayerId, secondPlayerId: $secondPlayerId, scores: $scores, gameType: $gameType, images: $images, date: $date)';
+    return 'Post(id: $id, firstPlayerId: $firstPlayerId, secondPlayerId: $secondPlayerId, scores: $scores, gameType: $gameType, status: $status, updates: $updates, date: $date)';
   }
 
   @override
@@ -86,7 +91,8 @@ class Post {
       o.secondPlayerId == secondPlayerId &&
       mapEquals(o.scores, scores) &&
       o.gameType == gameType &&
-      listEquals(o.images, images) &&
+      o.status == status &&
+      listEquals(o.updates, updates) &&
       o.date == date;
   }
 
@@ -97,7 +103,8 @@ class Post {
       secondPlayerId.hashCode ^
       scores.hashCode ^
       gameType.hashCode ^
-      images.hashCode ^
+      status.hashCode ^
+      updates.hashCode ^
       date.hashCode;
   }
 }

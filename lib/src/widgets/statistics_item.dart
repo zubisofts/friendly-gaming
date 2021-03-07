@@ -1,4 +1,4 @@
-import 'package:dotted_border/dotted_border.dart';
+// import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class StatisticsItem extends StatelessWidget {
@@ -37,14 +37,14 @@ class StatisticsItem extends StatelessWidget {
                           ),
                         ),
                       )),
-                  DottedBorder(
-                    strokeWidth: 2,
-                    child: Container(
-                      // width: 0,
-                      height: 130,
-                    ),
-                    color: Colors.grey,
-                  )
+                  // DottedBorder(
+                  //   strokeWidth: 2,
+                  //   child: Container(
+                  //     // width: 0,
+                  //     height: 130,
+                  //   ),
+                  //   color: Colors.grey,
+                  // )
                 ],
               ),
               Expanded(

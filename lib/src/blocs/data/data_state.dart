@@ -37,6 +37,8 @@ class UsersFetchedState extends DataState {
 
 class PostSavingState extends DataState {}
 
+class PostEditingState extends DataState {}
+
 class PostSavedState extends DataState {
   final String postId;
 
@@ -54,6 +56,10 @@ class PostsFetchedState extends DataState {
   @override
   List<Object> get props => [posts];
 }
+
+class PostEditedState extends DataState {}
+
+class PostEditErrorState extends DataState {}
 
 class SendingRequestState extends DataState {
   @override
@@ -125,4 +131,34 @@ class MessagesFetchedState extends DataState {
   MessagesFetchedState({@required this.messages});
   @override
   List<Object> get props => [messages];
+}
+
+class CommentAddedState extends DataState {
+  final String commentId;
+  CommentAddedState({@required this.commentId});
+  @override
+  List<Object> get props => [commentId];
+}
+
+class CommentsLoadingState extends DataState {}
+
+class CommentsLoadErrorState extends DataState {
+  final String errorMessage;
+  CommentsLoadErrorState({@required this.errorMessage});
+  @override
+  List<Object> get props => [errorMessage];
+}
+
+class CommentsLoadedState extends DataState {
+  final List<Comment> comments;
+  CommentsLoadedState({@required this.comments});
+  @override
+  List<Object> get props => [comments];
+}
+
+class LikesLoadedState extends DataState {
+  final List<Like> likes;
+  LikesLoadedState({@required this.likes});
+  @override
+  List<Object> get props => [likes];
 }

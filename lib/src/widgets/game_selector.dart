@@ -37,35 +37,35 @@ class _GameSelectorState extends State<GameSelector> {
                         title: 'FIFA', isSelected: 'FIFA' == selectedGame)),
                 InkWell(
                     onTap: () => setState(() {
-                          selectedGame = 'CRICKET';
+                          selectedGame = 'PES';
                           widget.onGameSelected(selectedGame);
                         }),
                     child: _buildGameWidget(
-                        title: 'CRICKET',
-                        isSelected: 'CRICKET' == selectedGame)),
+                        title: 'PES',
+                        isSelected: 'PES' == selectedGame)),
               ],
             ),
           ),
-          Expanded(
-            child: Column(
-              children: [
-                InkWell(
-                    onTap: () => setState(() {
-                          selectedGame = 'COD';
-                          widget.onGameSelected(selectedGame);
-                        }),
-                    child: _buildGameWidget(
-                        title: 'COD', isSelected: 'COD' == selectedGame)),
-                InkWell(
-                    onTap: () => setState(() {
-                          selectedGame = 'DOTA 2';
-                          widget.onGameSelected(selectedGame);
-                        }),
-                    child: _buildGameWidget(
-                        title: 'DOTA 2', isSelected: 'DOTA 2' == selectedGame)),
-              ],
-            ),
-          )
+          // Expanded(
+          //   child: Column(
+          //     children: [
+          //       InkWell(
+          //           onTap: () => setState(() {
+          //                 selectedGame = 'COD';
+          //                 widget.onGameSelected(selectedGame);
+          //               }),
+          //           child: _buildGameWidget(
+          //               title: 'COD', isSelected: 'COD' == selectedGame)),
+          //       InkWell(
+          //           onTap: () => setState(() {
+          //                 selectedGame = 'DOTA 2';
+          //                 widget.onGameSelected(selectedGame);
+          //               }),
+          //           child: _buildGameWidget(
+          //               title: 'DOTA 2', isSelected: 'DOTA 2' == selectedGame)),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

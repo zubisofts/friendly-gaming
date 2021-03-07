@@ -19,8 +19,8 @@
 <!-- android:name="io.flutter.app.FlutterApplication" -->
     <application
         android:name=".Application"
-        android:label="Friendly Gaming"
-        android:icon="@mipmap/ic_launcher">
+        android:label="SURUU"
+        android:icon="@drawable/logo">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

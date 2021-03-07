@@ -10,19 +10,25 @@
 			"name": "tecno",
 			"request": "launch",
 			"type": "dart",
+			"deviceId": "192.168.43.220:5555"
+		},
+		{
+			"name": "Noble Device",
+			"request": "launch",
+			"type": "dart",
 			"deviceId": "04605339A6002569"
 		},
 		{
-			"name": "infinix",
+			"name": "Chrome",
 			"request": "launch",
 			"type": "dart",
-			"deviceId": "3a4fe4c9"
+			"deviceId": "chrome"
 		},
 	],
 	"compounds": [
 		{
 			"name": "All Devices",
-			"configurations": ["tecno", "infinix"],
+			"configurations": ["tecno", "infinix", "chrome"],
 		}
 	]
 }

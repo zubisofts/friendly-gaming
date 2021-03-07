@@ -98,6 +98,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is AuthStateChangedEvent) {
       // var user =event.user?.id !=null ? await new DataRepository().user(event.user.id):null;
       uid = event.user?.id;
+      if(event.user != null){
+        authenticationRepository.saveDeviceToken(event.user?.id);
+      }
+      
       yield AuthStateChangedState(user: event.user);
     }
   }
@@ -137,7 +141,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Stream<AuthState> _mapLoginWithGoogleEventToState() async* {
     try {
-      await authenticationRepository.logInWithGoogle();
+      await authenticationRepository.signInGoogle(true);
     } on LogInWithGoogleFailure catch (ex) {
       yield AuthErrorState(errorMessage: ex.message);
     }
@@ -189,7 +193,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> _mapSignupWithGoogleEventToState() async* {
     try {
       yield AuthLoadingState();
-      var user = await authenticationRepository.signupWithGoogle();
+      await authenticationRepository.signInGoogle(false);
     } on SignUpFailure catch (e) {
       yield AuthErrorState(errorMessage: e.message);
       print(e.message);
