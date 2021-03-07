@@ -21,24 +21,15 @@ class _ChatInputState extends State<ChatInput> {
     return Container(
       child: Row(
         children: <Widget>[
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              decoration: BoxDecoration(shape: BoxShape.circle),
-              child: new IconButton(
-                onPressed: () {},
-                icon: new Icon(Icons.emoji_emotions),
-                color: Colors.blue,
-              ),
-            ),
-            color: Colors.white,
-          ),
-
           // Text input
           Flexible(
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: TextFormField(
-                style: TextStyle(color: Colors.black, fontSize: 15.0),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15.0,
+                ),
                 controller: textEditingController,
                 maxLines: 3,
                 minLines: 1,
@@ -48,18 +39,6 @@ class _ChatInputState extends State<ChatInput> {
                 ),
               ),
             ),
-          ),
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              decoration: BoxDecoration(shape: BoxShape.circle),
-              child: new IconButton(
-                onPressed: () {},
-                icon: new Icon(Icons.add_a_photo),
-                color: Colors.blue,
-              ),
-            ),
-            color: Colors.white,
           ),
 
           // Send Message Button
@@ -84,16 +63,16 @@ class _ChatInputState extends State<ChatInput> {
                 color: Colors.blue,
               ),
             ),
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
           ),
         ],
       ),
       width: double.infinity,
       height: 50.0,
       decoration: new BoxDecoration(
-          border:
-              new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
-          color: Colors.white),
+        border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
+        color: Theme.of(context).cardColor,
+      ),
     );
   }
 }

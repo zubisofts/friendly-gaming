@@ -7,6 +7,7 @@ import 'package:friendly_gaming/src/model/notification.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
+import 'package:friendly_gaming/src/screens/contacts_screen.dart';
 import 'package:friendly_gaming/src/screens/incoming_call_screen.dart';
 import 'package:friendly_gaming/src/screens/notification_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
@@ -171,13 +172,14 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 // scaffoldKey.currentState
                 // .showSnackBar(SnackBar(content: Text('heloo')));
-                // if (activePage == 0) {
-                //   _showModalBottomSheet(context);
-                // } else {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        AddPostScreen(widget.user)));
-                // }
+                if (activePage == 1) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => ContactsScreen()));
+                } else {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          AddPostScreen(widget.user)));
+                }
               })
           : SizedBox.shrink(),
       bottomNavigationBar: ConvexAppBar(
