@@ -76,6 +76,14 @@ class FetchPostEvent extends DataEvent {
   List<Object> get props => [];
 }
 
+class FetchUserGamesEvent extends DataEvent {
+  final String uid;
+
+  FetchUserGamesEvent({this.uid});
+  @override
+  List<Object> get props => [uid];
+}
+
 class PostFetchedEvent extends DataEvent {
   final List<Post> posts;
 

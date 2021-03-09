@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/message.dart';
 import 'package:friendly_gaming/src/model/user.dart';
-import 'package:friendly_gaming/src/screens/dial_screen.dart';
+// import 'package:friendly_gaming/src/screens/dial_screen.dart';
 import 'package:friendly_gaming/src/widgets/chat_input.dart';
 import 'package:friendly_gaming/src/widgets/message_row_widget.dart';
 
@@ -64,21 +64,6 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.call, color: Theme.of(context).iconTheme.color),
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    DialScreen(user: widget.user))),
-          ),
-          IconButton(
-            icon: Icon(Icons.video_call,
-                color: Theme.of(context).iconTheme.color),
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    DialScreen(user: widget.user))),
-          ),
-        ],
       ),
       body: BlocBuilder<DataBloc, DataState>(
         buildWhen: (previous, current) => current is MessagesFetchedState,

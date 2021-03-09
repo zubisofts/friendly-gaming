@@ -195,6 +195,10 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     if (event is DeleteCommentEvent) {
       MessagingRepository().deleteComent(event.commentId, event.postId);
     }
+
+    if (event is FetchUserGamesEvent) {
+      yield* _mapFetchUserGamesEventToState(event.uid);
+    }
   }
 
   @override
@@ -255,6 +259,16 @@ class DataBloc extends Bloc<DataEvent, DataState> {
         dataRepository.posts.call(page: page).listen((posts) {
       add(PostFetchedEvent(posts: posts));
     });
+  }
+
+  Stream<DataState> _mapFetchUserGamesEventToState(uid) async* {
+    try {
+      yield FetchUserGamesLoading();
+      List<Post> games = await dataRepository.getGames(uid);
+      yield UserGamesFetched(games: games);
+    } catch (e) {
+      yield FetchUserGamesError(error: e.message);
+    }
   }
 
   Stream<DataState> _mapSendRequestEventToState(Request request) async* {

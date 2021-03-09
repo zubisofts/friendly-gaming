@@ -163,6 +163,47 @@ class DataRepository {
     return null;
   }
 
+  Stream<List<Post>> completedGames({page}) {
+    try {
+      return FirebaseFirestore.instance
+          .collection("posts")
+          .where('status', isEqualTo: 'completed')
+          .orderBy('date', descending: true)
+          // .startAt(page)
+          // .limit(5)
+          .snapshots()
+          .asyncMap((snapshots) async {
+        return await convertSnapshots(snapshots);
+      });
+      //
+    } on FirebaseException catch (ex) {
+      print(ex.message);
+    }
+
+    return null;
+  }
+
+  Future<List<Post>> getGames(String uid) async {
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection("posts")
+          .where('status', isEqualTo: 'completed')
+          .orderBy('date', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((post) => Post.fromMap(post.data()))
+          .where(
+              (post) => post.firstPlayerId == uid || post.secondPlayerId == uid)
+          .toList();
+      //
+    } on FirebaseException catch (ex) {
+      print(ex.message);
+    }
+
+    return null;
+  }
+
   Future<bool> editPost(Map<String, dynamic> data, String postId) async {
     try {
       await FirebaseFirestore.instance
