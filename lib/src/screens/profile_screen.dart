@@ -66,15 +66,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ? ClipOval(
                             child: CachedNetworkImage(
                               imageUrl: '${user.photo}',
-                              width: 150,
-                              height: 150,
+                              width: 100,
+                              height: 100,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Shimmer.fromColors(
                                 baseColor: Colors.grey[300],
                                 highlightColor: Colors.grey[100],
                                 child: Container(
-                                  width: 150,
-                                  height: 150,
+                                  width: 100,
+                                  height: 100,
                                 ),
                               ),
                               errorWidget: (context, url, error) =>
@@ -87,28 +87,45 @@ class _ProfileScreenState extends State<ProfileScreen>
                             highlightColor: Colors.grey[100],
                             child: state is UserDataState
                                 ? Container(
-                                    width: 150,
-                                    height: 150,
+                                    width: 100,
+                                    height: 100,
                                   )
                                 : Image.asset(
                                     'assets/images/profile_icon.png',
-                                    width: 150,
-                                    height: 150,
+                                    width: 100,
+                                    height: 100,
                                     fit: BoxFit.cover,
                                   ),
                           )),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 16,
                   ),
                   user?.name != null
-                      ? Text(
-                          '${user?.name ?? ''}',
-                          style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.headline6.color,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
+                      ? Column(
+                          children: [
+                            Text(
+                              '${user?.name ?? ''}',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      .color,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 8.0),
+                            Text(
+                              '${user?.email ?? ''}',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      .color,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         )
                       : Shimmer.fromColors(
                           baseColor: Colors.grey[300],
@@ -121,35 +138,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                   SizedBox(
                     height: 20,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                    child: ListTile(
-                      focusColor: Theme.of(context).canvasColor,
-                      leading: Icon(
-                        Icons.person,
-                        color: Colors.blue,
-                      ),
-                      title: Text(
-                        'Edit Profile',
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                .color
-                                .withOpacity(0.5),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      trailing: Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.blue,
-                      ),
-                      onTap: () {},
-                    ),
                   ),
                   SizedBox(
                     height: 12.0,
@@ -180,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         color: Colors.blue,
                       ),
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => StatisticsScreen())),
+                          builder: (context) => StatisticsScreen(user:user))),
                     ),
                   ),
                   SizedBox(

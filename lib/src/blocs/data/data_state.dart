@@ -61,6 +61,22 @@ class PostEditedState extends DataState {}
 
 class PostEditErrorState extends DataState {}
 
+class FetchUserGamesLoading extends DataState {}
+
+class FetchUserGamesError extends DataState {
+  final String error;
+  FetchUserGamesError({this.error});
+  @override
+  List<Object> get props => [error];
+}
+
+class UserGamesFetched extends DataState {
+  final List<Post> games;
+  UserGamesFetched({this.games});
+  @override
+  List<Object> get props => [games];
+}
+
 class SendingRequestState extends DataState {
   @override
   List<Object> get props => [];

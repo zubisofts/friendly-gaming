@@ -8,7 +8,7 @@ import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/add_post_screen.dart';
 import 'package:friendly_gaming/src/screens/chat_screen.dart';
 import 'package:friendly_gaming/src/screens/contacts_screen.dart';
-import 'package:friendly_gaming/src/screens/incoming_call_screen.dart';
+// import 'package:friendly_gaming/src/screens/incoming_call_screen.dart';
 import 'package:friendly_gaming/src/screens/notification_screen.dart';
 import 'package:friendly_gaming/src/screens/profile_screen.dart';
 import 'package:friendly_gaming/src/screens/timeline_screen.dart';
