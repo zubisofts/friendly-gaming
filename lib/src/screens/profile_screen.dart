@@ -7,6 +7,7 @@ import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/screens/game_requests_screen.dart';
 import 'package:friendly_gaming/src/screens/my_games_screen.dart';
 import 'package:friendly_gaming/src/screens/notification_screen.dart';
+import 'package:friendly_gaming/src/screens/prediction_screen.dart';
 import 'package:friendly_gaming/src/screens/settings_screen.dart';
 import 'package:friendly_gaming/src/screens/statistics_screen.dart';
 import 'package:page_transition/page_transition.dart';
@@ -168,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         color: Colors.blue,
                       ),
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => StatisticsScreen(user:user))),
+                          builder: (context) => StatisticsScreen(user: user))),
                     ),
                   ),
                   SizedBox(
@@ -240,6 +241,43 @@ class _ProfileScreenState extends State<ProfileScreen>
                             PageTransition(
                                 type: PageTransitionType.rightToLeft,
                                 child: GameRequestsScreen()));
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.0,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.sports_soccer_outlined,
+                        color: Colors.blue,
+                      ),
+                      title: Text(
+                        'Prediction',
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                .color
+                                .withOpacity(0.5),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Icon(
+                        Icons.keyboard_arrow_right,
+                        color: Colors.blue,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: PredictionScreen()));
                       },
                     ),
                   ),

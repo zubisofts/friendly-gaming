@@ -236,7 +236,7 @@ class EmailInput extends StatelessWidget {
         return TextFormField(
           key: const Key("email_input"),
           onChanged: (email) => context
-              .bloc<AuthBloc>()
+              .read<AuthBloc>()
               .add(OnSubmitLoginFormDetailsEvent(email: email, isEmail: true)),
           decoration: InputDecoration(
               hintText: 'Enter email',
@@ -264,7 +264,7 @@ class LoginButton extends StatelessWidget {
         }
 
         if (state is AuthErrorState) {
-          Scaffold.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.errorMessage),
           ));
         }

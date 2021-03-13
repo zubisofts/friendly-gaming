@@ -1,10 +1,41 @@
 // import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
-class StatisticsItem extends StatelessWidget {
+class StatisticsItem extends StatefulWidget {
   final data;
 
   const StatisticsItem({Key key, this.data}) : super(key: key);
+
+  @override
+  _StatisticsItemState createState() => _StatisticsItemState();
+}
+
+class _StatisticsItemState extends State<StatisticsItem> {
+  var fifaWinsTotal,
+      pesWinsTotal,
+      pesLoseTotal,
+      fifaLoseTotal,
+      total,
+      drawTotal,
+      pesTotal,
+      fifaTotal;
+
+  @override
+  void initState() {
+    fifaWinsTotal = widget.data['fifaWins'].length;
+    pesWinsTotal = widget.data['pesWins'].length;
+    pesLoseTotal = widget.data['pesLoses'].length;
+    fifaLoseTotal = widget.data['fifaLoses'].length;
+    pesTotal = widget.data['pesTotal'];
+    fifaTotal = widget.data['fifaTotal'];
+    total = widget.data['total'];
+
+    drawTotal =
+        total - (fifaWinsTotal + pesWinsTotal + pesLoseTotal + fifaLoseTotal);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -69,6 +100,15 @@ class StatisticsItem extends StatelessWidget {
                         ),
                         TableCell(
                           child: Text(
+                            'Draw',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        TableCell(
+                          child: Text(
                             'Played',
                             style: TextStyle(
                                 color:
@@ -82,6 +122,9 @@ class StatisticsItem extends StatelessWidget {
                       // ****************************************
                       // ***********************************
                       TableRow(children: [
+                        TableCell(
+                          child: Text(''),
+                        ),
                         TableCell(
                           child: Text(''),
                         ),
@@ -108,7 +151,7 @@ class StatisticsItem extends StatelessWidget {
                         ),
                         TableCell(
                           child: Text(
-                            '10',
+                            '$fifaWinsTotal',
                             style: TextStyle(
                                 color:
                                     Theme.of(context).textTheme.headline6.color,
@@ -118,7 +161,7 @@ class StatisticsItem extends StatelessWidget {
                         ),
                         TableCell(
                           child: Text(
-                            '2',
+                            '$fifaLoseTotal',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12.0,
@@ -127,7 +170,17 @@ class StatisticsItem extends StatelessWidget {
                         ),
                         TableCell(
                           child: Text(
-                            '12',
+                            '${fifaTotal - (fifaLoseTotal + fifaWinsTotal)}',
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).textTheme.headline6.color,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        TableCell(
+                          child: Text(
+                            '$fifaTotal',
                             style: TextStyle(
                                 color:
                                     Theme.of(context).textTheme.headline6.color,
@@ -139,6 +192,9 @@ class StatisticsItem extends StatelessWidget {
                       // ****************************************
                       // ***********************************
                       TableRow(children: [
+                        TableCell(
+                          child: Text(''),
+                        ),
                         TableCell(
                           child: Text(''),
                         ),
@@ -165,16 +221,17 @@ class StatisticsItem extends StatelessWidget {
                         ),
                         TableCell(
                           child: Text(
-                            '5',
+                            '$pesWinsTotal',
                             style: TextStyle(
-                                color: Colors.green,
+                                color:
+                                    Theme.of(context).textTheme.headline6.color,
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
                         TableCell(
                           child: Text(
-                            '1',
+                            '$pesLoseTotal',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12.0,
@@ -183,7 +240,16 @@ class StatisticsItem extends StatelessWidget {
                         ),
                         TableCell(
                           child: Text(
-                            '6',
+                            '${pesTotal - (pesLoseTotal + pesWinsTotal)}',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        TableCell(
+                          child: Text(
+                            '$pesTotal',
                             style: TextStyle(
                                 color:
                                     Theme.of(context).textTheme.headline6.color,

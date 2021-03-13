@@ -479,7 +479,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
           BlocConsumer<DataBloc, DataState>(
             listener: (context, state) {
               if (state is PostSavedState) {
-                Scaffold.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Post saved with ID:${state.postId}'),
                 ));
                 Navigator.of(context).pop();

@@ -1,9 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/user.dart';
+import 'package:friendly_gaming/src/screens/message_screen.dart';
+import 'package:friendly_gaming/src/utils/fg_utils.dart';
 import 'package:friendly_gaming/src/widgets/chart_stat.dart';
 import 'package:friendly_gaming/src/widgets/statistics_item.dart';
 
@@ -45,6 +50,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             onPressed: () {
               Navigator.pop(context);
             }),
+        actions: [
+          widget.user.id == AuthBloc.uid
+              ? SizedBox.shrink()
+              : IconButton(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => MessageScreen(
+                            user: widget.user,
+                          ))),
+                  icon: Icon(Icons.chat, color: Colors.blueGrey),
+                )
+        ],
       ),
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.0),
@@ -59,8 +75,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ClipOval(
                       child: CircleAvatar(
                         radius: 45,
-                        child: CachedNetworkImage(
-                            imageUrl: '${widget.user.photo}'),
+                        backgroundImage:
+                            CachedNetworkImageProvider('${widget.user.photo}'),
                       ),
                     ),
                     SizedBox(height: 16.0),
@@ -86,35 +102,84 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 height: 32.0,
               ),
               BlocBuilder<DataBloc, DataState>(
+                buildWhen: (prev, curr) =>
+                    (curr is UserGamesFetched) ||
+                    (curr is FetchUserGamesLoading),
                 builder: (context, state) {
                   if (state is UserGamesFetched) {
-                    var data = getData(state.games);
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Game Chart Summary',
-                          style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.headline6.color,
-                              fontSize: 16.0),
-                        ),
-                        PieChartWidget(data: data),
-                        Text(
-                          'Game Table',
-                          style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.headline6.color,
-                              fontSize: 16.0),
-                        ),
-                        StatisticsItem(data: data),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                      ],
-                    );
+                    Map data =
+                        FGUtils.getPlayerStatsInfo(state.games, widget.user.id);
+                    return state.games.isNotEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Game Chart Summary',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .color,
+                                    fontSize: 16.0),
+                              ),
+                              PieChartWidget(data: data),
+                              Text(
+                                'Game Table',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .color,
+                                    fontSize: 16.0),
+                              ),
+                              StatisticsItem(data: data),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                            ],
+                          )
+                        : Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 32.0),
+                                  SvgPicture.asset(
+                                    'assets/icons/empty.svg',
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                  ),
+                                  SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  Text(
+                                    AuthBloc.uid == widget.user.id
+                                        ? 'You have not played any game yet, once you play your statistics will appear here.'
+                                        : 'This user have not completed any game yet, once he plays, his game statistics will appear here.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .headline6
+                                            .color
+                                            .withOpacity(0.5),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
                   }
-                  return Text('Please wait');
+                  return Center(
+                      child: Container(
+                    margin: EdgeInsets.only(top: 45.0),
+                    child: SpinKitCircle(
+                      color: Colors.blueGrey,
+                      size: 32.0,
+                    ),
+                  ));
                 },
               ),
             ],
@@ -122,68 +187,5 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         ),
       ),
     );
-  }
-
-  getData(List<Post> games) {
-    int total = games.length;
-    var fifaGames = games.where((game) => game.gameType == 'FIFA');
-    var pesGames = games.where((game) => game.gameType == 'PES');
-    var fifaWins1 = fifaGames
-        .where((g) => g.firstPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['firstPlayerScore'] > g.scores['secondPlayerScore'])
-        .toList();
-
-    var fifaWins2 = fifaGames
-        .where((g) => g.secondPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['secondPlayerScore'] > g.scores['firstPlayerScore'])
-        .toList();
-
-    var fifaLose1 = fifaGames
-        .where((g) => g.firstPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['firstPlayerScore'] < g.scores['secondPlayerScore'])
-        .toList();
-
-    var fifaLose2 = fifaGames
-        .where((g) => g.secondPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['secondPlayerScore'] < g.scores['firstPlayerScore'])
-        .toList();
-
-    var pesWins1 = fifaGames
-        .where((g) => g.firstPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['firstPlayerScore'] > g.scores['secondPlayerScore'])
-        .toList();
-
-    var pesWins2 = fifaGames
-        .where((g) => g.secondPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['secondPlayerScore'] > g.scores['firstPlayerScore'])
-        .toList();
-
-    var pesLose1 = fifaGames
-        .where((g) => g.firstPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['firstPlayerScore'] < g.scores['secondPlayerScore'])
-        .toList();
-
-    var pesLose2 = fifaGames
-        .where((g) => g.secondPlayerId == widget.user.id)
-        .where(
-            (g) => g.scores['secondPlayerScore'] < g.scores['firstPlayerScore'])
-        .toList();
-
-    var data = {
-      'total': total,
-      'pesWins': List.from(pesWins1)..addAll(pesWins2),
-      'fifaWins': List.from(fifaWins1)..addAll(fifaWins2),
-      'pesLoses': List.from(pesLose1)..addAll(pesLose2),
-      'fifaLoses': List.from(fifaLose1)..addAll(fifaLose2),
-    };
-
-    return data;
   }
 }

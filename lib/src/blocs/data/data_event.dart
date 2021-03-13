@@ -84,6 +84,16 @@ class FetchUserGamesEvent extends DataEvent {
   List<Object> get props => [uid];
 }
 
+class FetchMultiPlayerGamesEvent extends DataEvent {
+  final String firstPlayerId;
+  final String secondPlayerId;
+
+  FetchMultiPlayerGamesEvent(
+      {@required this.firstPlayerId, @required this.secondPlayerId});
+  @override
+  List<Object> get props => [firstPlayerId, secondPlayerId];
+}
+
 class PostFetchedEvent extends DataEvent {
   final List<Post> posts;
 

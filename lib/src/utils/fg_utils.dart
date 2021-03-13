@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
+import 'package:friendly_gaming/src/model/post.dart';
 import 'package:intl/intl.dart';
 
 class FGUtils {
@@ -55,5 +56,70 @@ class FGUtils {
       print(ex);
     }
     // Share.text(title,"hdfjhil","text");
+  }
+
+  static Map<String,dynamic> getPlayerStatsInfo(List<Post> games, String userId){
+    int total = games.length;
+    var fifaGames = games.where((game) => game.gameType == 'FIFA');
+    var pesGames = games.where((game) => game.gameType == 'PES');
+    var fifaWins1 = fifaGames
+        .where((g) => g.firstPlayerId == userId)
+        .where(
+            (g) => g.scores['firstPlayerScore'] > g.scores['secondPlayerScore'])
+        .toList();
+
+    var fifaWins2 = fifaGames
+        .where((g) => g.secondPlayerId == userId)
+        .where(
+            (g) => g.scores['secondPlayerScore'] > g.scores['firstPlayerScore'])
+        .toList();
+
+    var fifaLose1 = fifaGames
+        .where((g) => g.firstPlayerId == userId)
+        .where(
+            (g) => g.scores['firstPlayerScore'] < g.scores['secondPlayerScore'])
+        .toList();
+
+    var fifaLose2 = fifaGames
+        .where((g) => g.secondPlayerId == userId)
+        .where(
+            (g) => g.scores['secondPlayerScore'] < g.scores['firstPlayerScore'])
+        .toList();
+
+    var pesWins1 = pesGames
+        .where((g) => g.firstPlayerId == userId)
+        .where(
+            (g) => g.scores['firstPlayerScore'] > g.scores['secondPlayerScore'])
+        .toList();
+
+    var pesWins2 = pesGames
+        .where((g) => g.secondPlayerId == userId)
+        .where(
+            (g) => g.scores['secondPlayerScore'] > g.scores['firstPlayerScore'])
+        .toList();
+
+    var pesLose1 = pesGames
+        .where((g) => g.firstPlayerId == userId)
+        .where(
+            (g) => g.scores['firstPlayerScore'] < g.scores['secondPlayerScore'])
+        .toList();
+
+    var pesLose2 = pesGames
+        .where((g) => g.secondPlayerId == userId)
+        .where(
+            (g) => g.scores['secondPlayerScore'] < g.scores['firstPlayerScore'])
+        .toList();
+
+    var data = {
+      'total': total,
+      'pesWins': List.from(pesWins1)..addAll(pesWins2),
+      'fifaWins': List.from(fifaWins1)..addAll(fifaWins2),
+      'pesLoses': List.from(pesLose1)..addAll(pesLose2),
+      'fifaLoses': List.from(fifaLose1)..addAll(fifaLose2),
+      'pesTotal': pesGames.length,
+      'fifaTotal': fifaGames.length
+    };
+
+    return data;
   }
 }

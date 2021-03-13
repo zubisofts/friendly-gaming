@@ -115,6 +115,24 @@ class _PieChartWidgetState extends State<PieChartWidget> {
   }
 
   List<PieChartSectionData> showingSections(data) {
+    int fifaWinsTotal = data['fifaWins'].length;
+    int pesWinsTotal = data['pesWins'].length;
+    int pesLoseTotal = data['pesLoses'].length;
+    int fifaLoseTotal = data['fifaLoses'].length;
+    int total = data['total'];
+
+    var drawTotal =
+        total - (fifaWinsTotal + pesWinsTotal + pesLoseTotal + fifaLoseTotal);
+
+    var winsPercentage =
+        (((fifaWinsTotal + pesWinsTotal) / total) * 100).round();
+    var losePercentage =
+        (((fifaLoseTotal + pesLoseTotal) / total) * 100).round();
+    var drawPercentage = ((drawTotal / total) * 100).round();
+
+    print(
+        'fifaWins:$fifaWinsTotal;pesWinsTotal:$pesWinsTotal;pesLoseTotal$pesLoseTotal;fifaLoseTotal:$fifaLoseTotal;total$total;drawTotal$drawTotal');
+
     return List.generate(3, (i) {
       final isTouched = i == touchedIndex;
       final double fontSize = isTouched ? 25 : 16;
@@ -123,8 +141,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         case 0:
           return PieChartSectionData(
             color: Colors.green,
-            value: data['pesWins'].length.toDouble(),
-            title: '40%',
+            value: (pesWinsTotal + fifaWinsTotal).toDouble(),
+            title: winsPercentage > 0 ? '$winsPercentage%' : '',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -134,8 +152,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         case 1:
           return PieChartSectionData(
             color: const Color(0xfff8b250),
-            value: data['fifaWins'].length.toDouble(),
-            title: '30%',
+            value: drawTotal.toDouble(),
+            title: drawPercentage > 0 ? '$drawPercentage%' : '',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -144,9 +162,9 @@ class _PieChartWidgetState extends State<PieChartWidget> {
           );
         case 2:
           return PieChartSectionData(
-            color: const Color(0xff845bef),
-            value: 5,
-            title: '15%',
+            color: Colors.red,
+            value: (pesLoseTotal + fifaLoseTotal).toDouble(),
+            title: losePercentage > 0 ? '$losePercentage%' : '',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
