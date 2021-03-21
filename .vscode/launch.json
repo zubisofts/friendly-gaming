@@ -1,34 +1,13 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		// {
-		// 	"name": "friendly_gaming",
-		// 	"request": "launch",
-		// 	"type": "dart"
-		// },
-		{
-			"name": "tecno",
-			"request": "launch",
-			"type": "dart",
-			"deviceId": "192.168.43.217:5555"
-		},
-		{
-			"name": "Noble Device",
-			"request": "launch",
-			"type": "dart",
-			"deviceId": "04605339A6002569"
-		},
-		{
-			"name": "Chrome",
-			"request": "launch",
-			"type": "dart",
-			"deviceId": "chrome"
-		},
-	],
-	"compounds": [
-		{
-			"name": "All Devices",
-			"configurations": ["tecno", "infinix", "chrome"],
-		}
-	]
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "friendly-gaming",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
 }
