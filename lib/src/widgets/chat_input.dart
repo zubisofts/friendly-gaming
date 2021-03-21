@@ -27,10 +27,12 @@ class _ChatInputState extends State<ChatInput> {
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: TextFormField(
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.headline6.color,
                   fontSize: 15.0,
                 ),
                 controller: textEditingController,
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
                 maxLines: 3,
                 minLines: 1,
                 decoration: InputDecoration.collapsed(

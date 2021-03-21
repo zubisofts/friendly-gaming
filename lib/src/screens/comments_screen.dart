@@ -13,7 +13,7 @@ import 'package:friendly_gaming/src/utils/fg_utils.dart';
 class CommentsScreen extends StatefulWidget {
   final Post post;
 
-  CommentsScreen(this.post);
+  const CommentsScreen(this.post);
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -51,8 +51,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
                   if (state is CommentsLoadedState) {
                     List<Comment> comments = state.comments;
-                    print(
-                        'Comments loaded*****************Size:${comments.length}');
                     return comments.isNotEmpty
                         ? Container(
                             height: MediaQuery.of(context).size.height,
@@ -65,7 +63,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
                             ),
                           )
                         : Center(
-                            child: Text('Be the first to add cooment'),
+                            child: Text('Be the first write a comment',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .color
+                                        .withOpacity(0.5),
+                                    fontSize: 18.0)),
                           );
                   }
 
@@ -104,7 +109,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _textInputController,
-                        keyboardType: TextInputType.multiline,
+                        // keyboardType: TextInputType.multiline,
+                        // textCapitalization: TextCapitalization.sentences,
                         style: TextStyle(
                           color: Theme.of(context).textTheme.headline6.color,
                         ),

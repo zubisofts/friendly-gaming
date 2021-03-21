@@ -10,7 +10,7 @@
 			"name": "tecno",
 			"request": "launch",
 			"type": "dart",
-			"deviceId": "192.168.43.206:5555"
+			"deviceId": "192.168.43.217:5555"
 		},
 		{
 			"name": "Noble Device",

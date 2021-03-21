@@ -130,8 +130,8 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         (((fifaLoseTotal + pesLoseTotal) / total) * 100).round();
     var drawPercentage = ((drawTotal / total) * 100).round();
 
-    print(
-        'fifaWins:$fifaWinsTotal;pesWinsTotal:$pesWinsTotal;pesLoseTotal$pesLoseTotal;fifaLoseTotal:$fifaLoseTotal;total$total;drawTotal$drawTotal');
+    // print(
+    //     'fifaWins:$fifaWinsTotal;pesWinsTotal:$pesWinsTotal;pesLoseTotal$pesLoseTotal;fifaLoseTotal:$fifaLoseTotal;total$total;drawTotal$drawTotal');
 
     return List.generate(3, (i) {
       final isTouched = i == touchedIndex;
