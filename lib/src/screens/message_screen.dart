@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/message.dart';
 import 'package:friendly_gaming/src/model/user.dart';
+import 'package:friendly_gaming/src/screens/statistics_screen.dart';
 // import 'package:friendly_gaming/src/screens/dial_screen.dart';
 import 'package:friendly_gaming/src/widgets/chat_input.dart';
 import 'package:friendly_gaming/src/widgets/message_row_widget.dart';
@@ -44,25 +45,18 @@ class _MessageScreenState extends State<MessageScreen> {
         elevation: 0,
         // centerTitle: true,
         // automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Expanded(
-            //   flex: 1,
-            //   child: CircleAvatar(
-            //     radius: 40.0,
-            //     backgroundImage: CachedNetworkImageProvider(widget.user.photo),
-            //   ),
-            // ),
-            SizedBox(width: 8),
-            Expanded(
-              flex: 5,
-              child: Text('${widget.user.name}',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).textTheme.headline6.color)),
-            ),
-          ],
+        title: InkWell(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => StatisticsScreen(
+                    user: widget.user,
+                  ))),
+          child: Expanded(
+            flex: 5,
+            child: Text('${widget.user.name}',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.headline6.color)),
+          ),
         ),
       ),
       body: BlocBuilder<DataBloc, DataState>(

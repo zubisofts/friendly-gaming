@@ -199,6 +199,11 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     if (event is FetchUserGamesEvent) {
       yield* _mapFetchUserGamesEventToState(event.uid);
     }
+
+    if (event is FetchMultiPlayerGamesEvent) {
+      yield* _mapFetchMultiPlayerGamesEventToState(
+          event.firstPlayerId, event.secondPlayerId);
+    }
   }
 
   @override
@@ -268,6 +273,18 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       yield UserGamesFetched(games: games);
     } catch (e) {
       yield FetchUserGamesError(error: e.message);
+    }
+  }
+
+  Stream<DataState> _mapFetchMultiPlayerGamesEventToState(
+      firstPlayerId, secondPlayerId) async* {
+    try {
+      yield FetchMultiPlayerGamesLoading();
+      Map<String, dynamic> games = await dataRepository.getMutiPlayesGames(
+          firstPlayerId, secondPlayerId);
+      yield MultiPlayerGamesFetched(games);
+    } catch (e) {
+      yield FetchMultiPlayerGamesError(error: e.message);
     }
   }
 

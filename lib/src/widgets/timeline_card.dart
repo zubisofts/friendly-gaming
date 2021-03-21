@@ -10,6 +10,7 @@ import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
 import 'package:friendly_gaming/src/repository/messaging_repo.dart';
 import 'package:friendly_gaming/src/screens/comments_screen.dart';
+import 'package:friendly_gaming/src/screens/statistics_screen.dart';
 import 'package:friendly_gaming/src/utils/fg_utils.dart';
 import 'package:friendly_gaming/src/widgets/win_switch.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -81,29 +82,38 @@ class _TimelineCardState extends State<TimelineCard> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             user1 = snapshot.data;
-                            return Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: CachedNetworkImageProvider(
-                                      '${user1.photo}'),
-                                ),
-                                SizedBox(
-                                  height: 8.0,
-                                ),
-                                Text(
-                                  user1.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
-                                  overflow: TextOverflow.fade,
-                                  maxLines: 1,
-                                  softWrap: false,
-                                )
-                              ],
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        StatisticsScreen(
+                                          user: user1,
+                                        )));
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: CachedNetworkImageProvider(
+                                        '${user1.photo}'),
+                                  ),
+                                  SizedBox(
+                                    height: 8.0,
+                                  ),
+                                  Text(
+                                    user1.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 1,
+                                    softWrap: false,
+                                  )
+                                ],
+                              ),
                             );
                           }
                           // if (snapshot.error) {
@@ -149,29 +159,38 @@ class _TimelineCardState extends State<TimelineCard> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             user2 = snapshot.data;
-                            return Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: CachedNetworkImageProvider(
-                                      '${user2.photo}'),
-                                ),
-                                SizedBox(
-                                  height: 8.0,
-                                ),
-                                Text(
-                                  user2.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
-                                  overflow: TextOverflow.fade,
-                                  maxLines: 1,
-                                  softWrap: false,
-                                )
-                              ],
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        StatisticsScreen(
+                                          user: user2,
+                                        )));
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: CachedNetworkImageProvider(
+                                        '${user2.photo}'),
+                                  ),
+                                  SizedBox(
+                                    height: 8.0,
+                                  ),
+                                  Text(
+                                    user2.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 1,
+                                    softWrap: false,
+                                  )
+                                ],
+                              ),
                             );
                           }
                           // if (snapshot.error) {

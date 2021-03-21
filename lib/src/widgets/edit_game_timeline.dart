@@ -262,11 +262,19 @@ class _EditGameCardState extends State<EditGameCard> {
           ),
           Container(
             // width: 200,
-            width: !(widget.timelineData.updates.contains(AuthBloc.uid))
+            width: ((widget.timelineData.updates.contains(AuthBloc.uid) &&
+                        widget.timelineData.updates.length == 1)) ||
+                    (!widget.timelineData.updates.contains(AuthBloc.uid) &&
+                        widget.timelineData.updates.length == 1) ||
+                    (widget.timelineData.updates.isEmpty)
                 ? 150
                 : MediaQuery.of(context).size.width,
             child: MaterialButton(
-              onPressed: !(widget.timelineData.updates.contains(AuthBloc.uid))
+              onPressed: ((widget.timelineData.updates.contains(AuthBloc.uid) &&
+                          widget.timelineData.updates.length == 1)) ||
+                      (!widget.timelineData.updates.contains(AuthBloc.uid) &&
+                          widget.timelineData.updates.length == 1) ||
+                      (widget.timelineData.updates.isEmpty)
                   ? () => showBarModalBottomSheet(
                         expand: false,
                         context: context,
@@ -280,7 +288,12 @@ class _EditGameCardState extends State<EditGameCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    !(widget.timelineData.updates.contains(AuthBloc.uid))
+                    ((widget.timelineData.updates.contains(AuthBloc.uid) &&
+                                widget.timelineData.updates.length == 1)) ||
+                            (!widget.timelineData.updates
+                                    .contains(AuthBloc.uid) &&
+                                widget.timelineData.updates.length == 1) ||
+                            (widget.timelineData.updates.isEmpty)
                         ? Icons.edit
                         : Icons.history_outlined,
                     color: Colors.blueGrey,
@@ -290,12 +303,25 @@ class _EditGameCardState extends State<EditGameCard> {
                   ),
                   Expanded(
                     child: Text(
-                        '${!(widget.timelineData.updates.contains(AuthBloc.uid)) ? 'Edit Score' : 'Waiting for opponent to confirm score'}',
+                        '${((widget.timelineData.updates.contains(AuthBloc.uid) && widget.timelineData.updates.length == 1)) || (!widget.timelineData.updates.contains(AuthBloc.uid) && widget.timelineData.updates.length == 1) || (widget.timelineData.updates.isEmpty) ? 'Edit Score' : 'Waiting for opponent to confirm score'}',
                         style: TextStyle(
-                            color: !(widget.timelineData.updates
-                                    .contains(AuthBloc.uid))
-                                ? Theme.of(context).textTheme.headline6.color
-                                : Colors.orange)),
+                            color:
+                                ((widget.timelineData.updates
+                                                .contains(AuthBloc.uid) &&
+                                            widget.timelineData.updates
+                                                    .length ==
+                                                1)) ||
+                                        (!widget.timelineData.updates
+                                                .contains(AuthBloc.uid) &&
+                                            widget.timelineData.updates
+                                                    .length ==
+                                                1) ||
+                                        (widget.timelineData.updates.isEmpty)
+                                    ? Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .color
+                                    : Colors.orange)),
                   ),
                 ],
               ),
@@ -330,7 +356,9 @@ class EditScoreWidget extends StatelessWidget {
               behavior: SnackBarBehavior.floating,
               margin: EdgeInsets.all(16.0),
               content: Text('Scores updated successfully',
-                  style: TextStyle(fontSize: 16.0))));
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.headline6.color,
+                      fontSize: 16.0))));
         }
 
         if (state is PostEditErrorState) {
@@ -404,11 +432,26 @@ class EditScoreWidget extends StatelessWidget {
                       'firstPlayerScore': score1,
                       'secondPlayerScore': score2,
                     };
-                    if (post.updates.length > 0) {
+                    if (!(post.updates.contains(AuthBloc.uid) &&
+                        post.updates.length == 1)) {
                       data['status'] = 'completed';
+                      data['updates'] = post.updates..add(AuthBloc.uid);
                     }
-                    data['updates'] = post.updates..add(AuthBloc.uid);
-                    context.read<DataBloc>().add(EditPostEvent(data, post.id));
+                    if (post.updates.length > 1 &&
+                        post.updates.contains(AuthBloc.uid)) {
+                      if (post.scores['firstPlayerScore'] == score1 &&
+                          post.scores['secondPlayerScore'] == score2) {
+                        context
+                            .read<DataBloc>()
+                            .add(EditPostEvent(data, post.id));
+                      } else {
+                        showWarning(context);
+                      }
+                    } else {
+                      context
+                          .read<DataBloc>()
+                          .add(EditPostEvent(data, post.id));
+                    }
                   },
                   child: Container(
                     child: Row(
@@ -433,4 +476,41 @@ class EditScoreWidget extends StatelessWidget {
       },
     );
   }
+}
+
+void showWarning(BuildContext context) {
+  AwesomeDialog(
+      context: context,
+      animType: AnimType.SCALE,
+      dialogType: DialogType.WARNING,
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              "Sorry the system cannot verify that your opponent's score tally with yours. If you think your opponent score is wrong, call him/her to update the right scores.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headline6.color,
+                  fontSize: 16.0,
+                  height: 1.5),
+            ),
+            SizedBox(height: 16.0),
+          ],
+        ),
+      ),
+      headerAnimationLoop: false,
+      btnOk: FlatButton(
+        onPressed: () async {
+          Navigator.of(context).pop();
+        },
+        color: Colors.blue,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+        child: Text(
+          'OK',
+          style: TextStyle(color: Colors.white),
+        ),
+      ))
+    ..show();
 }

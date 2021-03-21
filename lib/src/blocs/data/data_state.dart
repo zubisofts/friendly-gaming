@@ -77,6 +77,22 @@ class UserGamesFetched extends DataState {
   List<Object> get props => [games];
 }
 
+class FetchMultiPlayerGamesLoading extends DataState {}
+
+class FetchMultiPlayerGamesError extends DataState {
+  final String error;
+  FetchMultiPlayerGamesError({this.error});
+  @override
+  List<Object> get props => [error];
+}
+
+class MultiPlayerGamesFetched extends DataState {
+  final Map<String, dynamic> games;
+  MultiPlayerGamesFetched(this.games);
+  @override
+  List<Object> get props => [games];
+}
+
 class SendingRequestState extends DataState {
   @override
   List<Object> get props => [];

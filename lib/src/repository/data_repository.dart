@@ -107,6 +107,19 @@ class DataRepository {
     }
   }
 
+  Future<List<User>> get allUsers async {
+    try {
+      var querySnapshot =
+          await FirebaseFirestore.instance.collection("users").get();
+      return querySnapshot.docs
+          .map((doc) => User.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   Future<List<User>> searchUsers(String query, {String uid}) async {
     print(query);
     try {
@@ -196,6 +209,39 @@ class DataRepository {
           .where(
               (post) => post.firstPlayerId == uid || post.secondPlayerId == uid)
           .toList();
+      //
+    } on FirebaseException catch (ex) {
+      print(ex.message);
+    }
+
+    return null;
+  }
+
+  Future<Map<String, dynamic>> getMutiPlayesGames(
+      String playerOneId, String playerTwoId) async {
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection("posts")
+          .where('status', isEqualTo: 'completed')
+          .orderBy('date', descending: true)
+          .get();
+
+      var p1games = snapshot.docs
+          .map((post) => Post.fromMap(post.data()))
+          .where((post) =>
+              post.firstPlayerId == playerOneId ||
+              post.secondPlayerId == playerOneId)
+          .toList();
+
+      var p2Games = snapshot.docs
+          .map((post) => Post.fromMap(post.data()))
+          .where((post) =>
+              post.firstPlayerId == playerTwoId ||
+              post.secondPlayerId == playerTwoId)
+          .toList();
+
+      return Map.of(
+          {'firstPlayerGames': p1games, 'secondPlayerGames': p2Games});
       //
     } on FirebaseException catch (ex) {
       print(ex.message);

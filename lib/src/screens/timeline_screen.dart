@@ -66,12 +66,12 @@ class _TimelineScreenState extends State<TimelineScreen> {
                       timelineData: post,
                     ),
                     groupComparator: (post1, post2) {
-                      return post1.compareTo(post2);
+                      return -1;
                     },
                     itemComparator: (post1, post2) {
                       // DateTime now = DateTime.now();
-                      String d1 = DateFormat('yyyy-MM-dd').format(post1.date);
-                      String d2 = DateFormat('yyyy-MM-dd').format(post2.date);
+                      String d1 = DateFormat.yMMMMEEEEd().format(post1.date);
+                      String d2 = DateFormat.yMMMMEEEEd().format(post2.date);
                       return d1.compareTo(d2);
                     },
 
