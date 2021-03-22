@@ -71,7 +71,6 @@ class _MyAppState extends State<MyApp> {
     if (Platform.isIOS) {
       iosSubscription =
           _firebaseMessaging.onIosSettingsRegistered.listen((data) {
-        // save the token  OR subscribe to a topic here
       });
 
       _firebaseMessaging
