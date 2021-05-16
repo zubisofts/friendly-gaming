@@ -8,3 +8,5 @@ Suruu is a platform where gamers share their thoughts and challenge each other o
 |  ![Login](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210516-135847.png)| ![Timeline](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210516-135900.png) |
 |--|--|
 | ![Comments](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210516-141535.png) | ![Profile](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210327-153709.png) |
+|--|--|
+|![Player Statistics](https://github.com/zubisoftsa/friendly-gaming/blob/master/assets/Screenshot_20210308-195651.png)|![Timeline](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210327-153649.png)|
