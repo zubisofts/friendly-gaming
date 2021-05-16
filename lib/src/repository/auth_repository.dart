@@ -150,6 +150,7 @@ class AuthenticationRepository {
       print('ex:${e.message}');
       throw LogInWithGoogleFailure(message: e.message);
     } on Exception catch (ex) {
+      print('ex:${ex}');
       throw LogInWithGoogleFailure(message: '$ex');
     }
   }

@@ -8,12 +8,13 @@ import 'package:friendly_gaming/src/model/comment.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/user.dart';
 import 'package:friendly_gaming/src/repository/data_repository.dart';
+import 'package:friendly_gaming/src/repository/messaging_repo.dart';
 import 'package:friendly_gaming/src/utils/fg_utils.dart';
 
 class CommentsScreen extends StatefulWidget {
   final Post post;
 
-  const CommentsScreen(this.post);
+  CommentsScreen(this.post);
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -42,15 +43,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Expanded(
-              child: BlocBuilder<DataBloc, DataState>(
-                buildWhen: (previous, current) =>
-                    (current is CommentsLoadErrorState) ||
-                    (current is CommentsLoadedState),
-                builder: (context, state) {
+              child: StreamBuilder<List<Comment>>(
+                stream: MessagingRepository().comments(widget.post.id),
+                builder: (context, snapshot) {
                   // print('Comments loaded*****************');
 
-                  if (state is CommentsLoadedState) {
-                    List<Comment> comments = state.comments;
+                  if (snapshot.hasData) {
+                    List<Comment> comments = snapshot.data;
                     return comments.isNotEmpty
                         ? Container(
                             height: MediaQuery.of(context).size.height,
@@ -74,7 +73,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                           );
                   }
 
-                  if (state is CommentsLoadErrorState) {
                     return Center(
                         child: Column(
                       children: [
@@ -86,13 +84,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         )
                       ],
                     ));
-                  }
 
-                  return Center(
-                      child: SpinKitCircle(
-                    color: Colors.blueGrey,
-                    size: 32.0,
-                  ));
+                  // return Center(
+                  //     child: SpinKitCircle(
+                  //   color: Colors.blueGrey,
+                  //   size: 32.0,
+                  // ));
                 },
               ),
             ),
@@ -127,7 +124,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   .withOpacity(0.5)),
                           border: InputBorder.none,
                         ),
-                        autofocus: true,
+                        autofocus: false,
                         // controller: _newMediaLinkAddressController,
                       ),
                     ),
@@ -182,11 +179,9 @@ class CommentWidget extends StatefulWidget {
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
-  Stream<User> _userDetails;
 
   @override
   void initState() {
-    _userDetails = DataRepository().userDetails(widget.comment.userId);
     super.initState();
   }
 
@@ -204,7 +199,7 @@ class _CommentWidgetState extends State<CommentWidget> {
             mainAxisSize: MainAxisSize.min,
             children: [
               StreamBuilder<User>(
-                  stream: _userDetails,
+                  stream: DataRepository().userDetails(widget.comment.userId),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       User user = snapshot.data;

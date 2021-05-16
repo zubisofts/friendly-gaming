@@ -59,7 +59,8 @@ class _MyAppState extends State<MyApp> {
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
       },
-      onBackgroundMessage: myBackgroundMessageHandler,
+      onBackgroundMessage:
+          Platform.isAndroid ? myBackgroundMessageHandler : null,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
       },
@@ -70,8 +71,7 @@ class _MyAppState extends State<MyApp> {
 
     if (Platform.isIOS) {
       iosSubscription =
-          _firebaseMessaging.onIosSettingsRegistered.listen((data) {
-      });
+          _firebaseMessaging.onIosSettingsRegistered.listen((data) {});
 
       _firebaseMessaging
           .requestNotificationPermissions(IosNotificationSettings());

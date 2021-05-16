@@ -40,7 +40,7 @@ class MessagingRepository {
           .doc(postId)
           .collection('comments')
           .where('postId', isEqualTo: '$postId')
-          .orderBy('time', descending: true)
+          .orderBy('time')
           .snapshots()
           .asyncMap((snapshots) async {
         return await convertSnapshots(snapshots);

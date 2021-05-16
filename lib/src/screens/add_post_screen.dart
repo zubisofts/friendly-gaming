@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendly_gaming/src/blocs/auth/auth_bloc.dart';
 import 'package:friendly_gaming/src/blocs/data/data_bloc.dart';
 import 'package:friendly_gaming/src/model/post.dart';
 import 'package:friendly_gaming/src/model/request.dart';
@@ -38,6 +39,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     firstPlayer = widget.user;
     secondPlayer = user;
     context.read<DataBloc>().add(FetchUsersEvent());
+    context.read<DataBloc>().add(FetchUserDetailsEvent(uid: AuthBloc.uid));
     games = {
       "FIFA": FIFAScoreSelector(
         onSelected: (score) {
@@ -128,10 +130,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Avatar(
-                          size: 120,
-                          image: '${firstPlayer?.photo}',
-                          name: '${firstPlayer?.name ?? 'Player 1'}'),
+                      BlocBuilder<DataBloc, DataState>(
+                          buildWhen: (previous, current) =>
+                              current is UserDataState,
+                          builder: (context, state) {
+                            if (state is UserDataState) {
+                              print("User has been fetched!!!");
+                              return Avatar(
+                                  size: 120,
+                                  image: '${state.user.photo}',
+                                  name: '${state.user.name}');
+                            }
+
+                            return SizedBox.shrink();
+                          }),
                       Text(
                         'VS',
                         style: TextStyle(
@@ -705,43 +717,45 @@ class _PlayerSelectionWidgetState extends State<PlayerSelectionWidget> {
           ),
         ),
         SizedBox(height: 24.0),
-        BlocBuilder<DataBloc, DataState>(builder: (context, state) {
-          if (state is UsersLoadingState) {
-            return LoadingWidget();
-          }
+        BlocBuilder<DataBloc, DataState>(
+            buildWhen: (previous, current) => current is UsersFetchedState,
+            builder: (context, state) {
+              if (state is UsersLoadingState) {
+                return LoadingWidget();
+              }
 
-          if (state is UsersFetchedState) {
-            List<User> users = state.users;
-            return users != null
-                ? Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 100,
-                    child: ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: users.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                // selectedIndex = index;
-                                widget.onSelectPlayer(users[index]);
-                              });
-                            },
-                            child: Avatar(
-                                size: 50,
-                                image: users[index].photo,
-                                name: users[index].name),
-                          );
-                        }),
-                  )
-                : Container(
-                    child: Text('Nothing found'),
-                  );
-          }
-          return SizedBox.shrink();
-        })
+              if (state is UsersFetchedState) {
+                List<User> users = state.users;
+                return users != null
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        child: ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: users.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    // selectedIndex = index;
+                                    widget.onSelectPlayer(users[index]);
+                                  });
+                                },
+                                child: Avatar(
+                                    size: 50,
+                                    image: users[index].photo,
+                                    name: users[index].name),
+                              );
+                            }),
+                      )
+                    : Container(
+                        child: Text('Nothing found'),
+                      );
+              }
+              return SizedBox.shrink();
+            })
       ],
     );
   }
