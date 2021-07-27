@@ -1,16 +1,12 @@
-# friendly_gaming
+# SURUU
 
-A new Flutter project.
+Suruu is a platform where gamers share their thoughts and challenge each other on a game specially PES and FIFA soccer games. The platform also allows the user to predict scores between two players.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+# Screenshots
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+|  ![Login](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210516-135847.png)| ![Timeline](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210516-135900.png) |
+|--|--|
+| ![Comments](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210516-141535.png) | ![Profile](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210327-153709.png) |
+|--|--|
+|![Player Statistics](https://github.com/zubisoftsa/friendly-gaming/blob/master/assets/Screenshot_20210308-195651.png)|![Timeline](https://github.com/zubisofts/friendly-gaming/blob/master/assets/Screenshot_20210327-153649.png)|
