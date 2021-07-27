@@ -129,7 +129,11 @@ class SignupScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?"),
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.headline6.color),
+                  ),
                   SizedBox(
                     width: 16,
                   ),
@@ -241,7 +245,10 @@ class SignupForm extends StatelessWidget {
         children: [
           Text(
             'Name',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.headline6.color),
           ),
           SizedBox(
             height: 8,
@@ -258,9 +265,35 @@ class SignupForm extends StatelessWidget {
                     .add(OnSubmitSignupDetailsEvent(name: name, which: 1)),
                 decoration: InputDecoration(
                     hintText: 'Enter name',
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.headline6.color),
                     errorText: isNameValid ? null : 'Name must not be empty',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16))),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color))),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.headline6.color),
               );
             },
           ),
@@ -269,7 +302,10 @@ class SignupForm extends StatelessWidget {
           ),
           Text(
             'Email',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.headline6.color),
           ),
           SizedBox(
             height: 8,
@@ -286,9 +322,35 @@ class SignupForm extends StatelessWidget {
                     .add(OnSubmitSignupDetailsEvent(email: email, which: 2)),
                 decoration: InputDecoration(
                     hintText: 'Enter email',
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.headline6.color),
                     errorText: isEmailValid ? null : 'Invalid email',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16))),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color))),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.headline6.color),
               );
             },
           ),
@@ -297,7 +359,10 @@ class SignupForm extends StatelessWidget {
           ),
           Text(
             'Password',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.headline6.color),
           ),
           SizedBox(
             height: 8,
@@ -315,9 +380,35 @@ class SignupForm extends StatelessWidget {
                 obscureText: true,
                 decoration: InputDecoration(
                     hintText: 'Enter password',
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.headline6.color),
                     errorText: isPasswordValid ? null : 'Invalid password',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16))),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color:
+                                Theme.of(context).textTheme.headline6.color))),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.headline6.color),
               );
             },
           ),

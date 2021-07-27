@@ -9,19 +9,36 @@ class Wrapper extends StatelessWidget {
     return (await showDialog(
           context: context,
           builder: (context) => new AlertDialog(
-            title: new Text('Confirm?'),
-            content: new Text('Do you want to logout of this App?'),
+            backgroundColor: Theme.of(context).cardColor,
+            title: new Text(
+              'Confirm?',
+              style:
+                  TextStyle(color: Theme.of(context).textTheme.headline6.color),
+            ),
+            content: new Text(
+              'Do you want to logout of this App?',
+              style:
+                  TextStyle(color: Theme.of(context).textTheme.headline6.color),
+            ),
             actions: <Widget>[
               new FlatButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
+                child: new Text(
+                  'No',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.headline6.color),
+                ),
               ),
               FlatButton(
                 onPressed: () {
                   context.bloc<AuthBloc>().add(LogoutEvent());
                   Navigator.of(context).pop(true);
                 },
-                child: new Text('Yes'),
+                child: new Text(
+                  'Yes',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.headline6.color),
+                ),
               ),
             ],
           ),
@@ -36,7 +53,9 @@ class Wrapper extends StatelessWidget {
       onWillPop: () => _onWillPop(context),
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
         if (state is AuthStateChangedState) {
-          return state.user != null ? HomeScreen(user:state.user) : AuthScreen();
+          return state.user != null
+              ? HomeScreen(user: state.user)
+              : AuthScreen();
         }
 
         return AuthScreen();

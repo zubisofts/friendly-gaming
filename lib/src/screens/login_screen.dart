@@ -127,7 +127,12 @@ class LoginScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Don't have an account?"),
+                        Text(
+                          "Don't have an account?",
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.headline6.color),
+                        ),
                         SizedBox(
                           width: 16,
                         ),
@@ -209,9 +214,30 @@ class PasswordInput extends StatelessWidget {
           decoration: InputDecoration(
               hintText: 'Enter password',
               helperText: '',
+              hintStyle:
+                  TextStyle(color: Theme.of(context).textTheme.headline6.color),
               errorText: isPasswordValid ? null : 'invalid password',
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                      width: 1,
+                      color: Theme.of(context).textTheme.headline6.color)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                      width: 1,
+                      color: Theme.of(context).textTheme.headline6.color)),
+              errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                      width: 1,
+                      color: Theme.of(context).textTheme.headline6.color)),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                      width: 1,
+                      color: Theme.of(context).textTheme.headline6.color))),
+          style: TextStyle(color: Theme.of(context).textTheme.headline6.color),
         );
       },
     );
@@ -239,11 +265,33 @@ class EmailInput extends StatelessWidget {
               .read<AuthBloc>()
               .add(OnSubmitLoginFormDetailsEvent(email: email, isEmail: true)),
           decoration: InputDecoration(
-              hintText: 'Enter email',
-              helperText: '',
-              errorText: isEmailValid ? null : 'invalid email',
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
+            hintText: 'Enter email',
+            helperText: '',
+            hintStyle:
+                TextStyle(color: Theme.of(context).textTheme.headline6.color),
+            errorText: isEmailValid ? null : 'invalid email',
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).textTheme.headline6.color)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).textTheme.headline6.color)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).textTheme.headline6.color)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).textTheme.headline6.color)),
+          ),
+          style: TextStyle(color: Theme.of(context).textTheme.headline6.color),
         );
       },
     );

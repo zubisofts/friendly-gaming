@@ -22,13 +22,17 @@ class _AuthScreenState extends State<AuthScreen> {
       appBar: isLogin
           ? null
           : AppBar(
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            elevation: 0,
-              title: Text('Signup',
-               style: TextStyle(color: Colors.black),),
+              centerTitle: true,
+              // backgroundColor: Theme.of(context).colorScheme.secondary,
+              elevation: 0,
+              title: Text(
+                'Signup',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.headline6.color),
+              ),
               leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios,color: Colors.black,),
+                  icon: Icon(Icons.arrow_back_ios,
+                      color: Theme.of(context).textTheme.headline6.color),
                   onPressed: () {
                     setState(() {
                       isLogin = !isLogin;
